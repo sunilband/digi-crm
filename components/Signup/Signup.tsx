@@ -5,12 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import {
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from 'firebase/auth'
-import { auth, provider } from '../../firebase/firebase'
+
 import spinner from '../../public/svgs/spinner.svg'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -74,59 +69,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         description: formikErrors.join(' , '),
       })
     } else {
-      try {
-        createUserWithEmailAndPassword(
-          auth,
-          formik.values.email,
-          formik.values.password,
-        )
-          .then((data: any) => {
-            const googleToken = data?.user.accessToken
-            // @ts-ignore
-            updateProfile(auth.currentUser, {
-              displayName: `${formik.values.firstname} ${formik.values.lastname}`,
-            }).then(() => {
-              setUser({
-                ...user,
-                name: data.user.displayName,
-                email: data.user.email,
-                image: '',
-              })
-              setCookie(
-                null,
-                'user',
-                JSON.stringify({
-                  ...user,
-                  name: data.user.displayName,
-                  email: data.user.email,
-                  image: '',
-                }),
-                {
-                  maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
-                  path: '/', // Cookie available across all paths
-                },
-              )
-              router.push('/')
-            })
-          })
-          .catch((err) => {
-            if (err.code === 'auth/email-already-in-use') {
-              toast({
-                title: 'User already exists',
-                description: 'Please login instead',
-              })
-            } else {
-              toast({
-                title: 'An error occured',
-              })
-            }
-          })
-      } catch (error: any) {
-        toast({
-          title: 'An error occured',
-        })
-        console.log(error)
-      }
+      // call api here
     }
   }
 

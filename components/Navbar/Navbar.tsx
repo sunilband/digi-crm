@@ -13,7 +13,6 @@ import userContext from "@/context/userContext";
 import { useContext } from "react";
 import { ThemeButton } from "../ThemeButton/ThemeButton";
 import { signOut } from "firebase/auth";
-import { auth, provider } from "../../firebase/firebase";
 import { destroyCookie } from "nookies";
 import { COOKIE_KEYS } from "@/utils/cookieEnums";
 import Avatar from "react-avatar";
@@ -25,17 +24,7 @@ function Navbar() {
   const { setUser, user } = useContext(userContext);
 
   const logout = () => {
-    signOut(auth)
-      .then(() => {
-        setUser(null);
-        destroyCookie(null, COOKIE_KEYS.User, {
-          path: "/",
-        });
-        console.log("User signed out");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  // logout function
   };
 
   return (
