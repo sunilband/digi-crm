@@ -59,11 +59,17 @@ export default function RootLayout({
       console.log("this is token", token);
       try {
         getUser(token).then((res) => {
-          const data = res[0];
-          setUser({
-            ...data,
-          });
-          router.push("/");
+          if (!res) {
+            router.push("/login");
+          }
+          console.log("this is res", res)
+          if(res!==undefined){
+            const data = res[0];
+            setUser({
+              ...data,
+            });
+            router.push("/");
+          }
         });
       } catch (error) {
         console.log("no user cookie found", error);
