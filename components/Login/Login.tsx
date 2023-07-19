@@ -67,7 +67,7 @@ const Login = (props: Props) => {
           });
           try {
             getUser(res.token).then((res) => {
-              const data = res[0];
+              const data = res;
               setUser({
                 ...data,
               });

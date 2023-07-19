@@ -18,6 +18,7 @@ import { COOKIE_KEYS } from "@/utils/cookieEnums";
 import Avatar from "react-avatar";
 import { usePathname } from "next/navigation";
 import { useRouter } from 'next/navigation'
+import Link from "next/link";
 
 
 function Navbar() {
@@ -27,12 +28,8 @@ function Navbar() {
   const { setUser, user } = useContext(userContext);
 
   const logout = () => {
-  // logout function
-  // router.push("/login");
   destroyCookie(null, COOKIE_KEYS.ACCESS_TOKEN);
-  setUser(null);
-  console.log("user logged out pushing to login")
-  
+  setUser(null);  
   };
 
   return (
@@ -47,6 +44,14 @@ function Navbar() {
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-6 border w-[300px] md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]
                 ">
+                  {user?.admin?
+                  <Link href="/edituser">
+                  <ListItem  title="Edit User">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Nostrum eos sed beatae iure ipsam veritatis, eaque
+                    voluptatum facere ullam accusantium?
+                  </ListItem>
+                  </Link>:null}
                   <ListItem href="/how-to-use" title="Dashboard">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     Nostrum eos sed beatae iure ipsam veritatis, eaque
