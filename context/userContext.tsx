@@ -1,7 +1,7 @@
 import { createContext} from 'react'
 export interface UserInterface {
   token: string
-  admin:string
+  admin:boolean
   email: string
   name: string
   tasks:[]

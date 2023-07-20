@@ -24,9 +24,9 @@ import Link from "next/link";
 function Navbar() {
   const router = useRouter();
   const page = usePathname();
-  const routes = ["/login", "/signup"];
+  const routes = ["/login", "/signup","/adminsignup"];
   const { setUser, user } = useContext(userContext);
-
+  console.log("user from nav",user)
   const logout = () => {
   destroyCookie(null, COOKIE_KEYS.ACCESS_TOKEN);
   setUser(null);  

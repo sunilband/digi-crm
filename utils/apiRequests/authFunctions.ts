@@ -19,6 +19,26 @@ export const userSignup = async (data:any) => {
   }
 };
 
+// signup Admin API
+export const adminSignup = async (data:any) => {
+
+  try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_ADMIN_REGISTER_USER}`, {
+          method: 'POST',
+          headers: {
+              // Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
+      const responseData = await response.json();
+      return responseData
+  } catch (error) {
+    console.log("signup error",error)
+  }
+};
+
+
 // login user API
 export const userLogin = async (data:any) => {
   try {
