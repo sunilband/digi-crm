@@ -41,6 +41,7 @@ export const adminSignup = async (data:any) => {
 
 // login user API
 export const userLogin = async (data:any) => {
+  console.log("login data",process.env.NEXT_PUBLIC_LOGIN_USER)
   try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_LOGIN_USER}`, {
           method: 'POST',
@@ -70,7 +71,7 @@ export const getUser = async (token:string) => {
       redirect: 'follow'
     };
     // @ts-ignore
-    const response =await fetch("http://localhost:5000/users/", requestOptions)
+    const response =await fetch(process.env.NEXT_PUBLIC_USER_INFO, requestOptions)
     const responseData = response.json();
     return responseData
     

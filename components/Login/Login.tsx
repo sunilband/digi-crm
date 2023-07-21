@@ -66,10 +66,12 @@ const Login = (props: Props) => {
             path: "/",
           });
           try {
-            getUser(res.token).then((res) => {
+            let token=res.token
+            getUser(token).then((res) => {
               const data = res;
               setUser({
                 ...data,
+                token: token,
               });
               toast({
                 title: "Login Success",

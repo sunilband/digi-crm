@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -18,7 +18,7 @@ import {
 import spinner from "../../public/svgs/spinner.svg";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter ,usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { setCookie, parseCookies } from "nookies";
 import { getCookie } from "../../utils/getCookie";
 import userContext from "@/context/userContext";
@@ -28,6 +28,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useToast } from "@/components/ui/use-toast";
 import { adminSignup } from "@/utils/apiRequests/authFunctions";
+import { getAllUsers, getManagers, updateUser } from "@/utils/apiRequests/adminFunctions";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -36,13 +37,13 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     firstname: "",
     lastname: "",
     email: "",
-    password: "",
-    passwordConfirm: "",
-    phone:'',
-    department:'',
-    role:'',
-    authLevel:'',
-    adminKey:''
+    phone: "",
+    department: "",
+    role: "",
+    manager:"",
+    _id:"",
+    managerID:"",
+    managerName:""
   };
 
   const formik = useFormik({
@@ -55,28 +56,41 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         .max(30, "Lastname should be 30 char or less")
         .required("Last Name Required"),
       email: Yup.string().email("Invalid Email").required("Email Required"),
-      password: Yup.string()
-        .min(6, "Password must be 6 char or more")
-        .required("Password Required"),
-      passwordConfirm: Yup.string()
-        .oneOf([Yup.ref("password")], "Passwords must match")
-        .required("Confirm Password Required"),
-      phone: Yup.string().min(10, "Phone number must be 10 char or more").required("Phone number Required"),
+      phone: Yup.string()
+        .min(10, "Phone number must be 10 char or more")
+        .required("Phone number Required"),
       department: Yup.string().required("Department Required"),
       role: Yup.string().required("Role Required"),
-      authLevel: Yup.string().required("Auth Level Required"),
-      adminKey: Yup.string().required("Admin Key Required"),
+      manager: Yup.string().required("Manager Required"),
+      _id:Yup.string().required("_id required"),
+      managerID: Yup.string().required("Manager ID Required"),
+      managerName: Yup.string().required("Manager Name Required"),
+
     }),
-    
+
     onSubmit: (values) => {},
   });
-
 
   const { toast } = useToast();
   const { user, setUser } = useContext(userContext);
   const router = useRouter();
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const page=usePathname()
 
+  // if not admin redirect to main page
+  useEffect(() => {
+    if(!user?.admin)
+    {
+      toast({
+        title: "Not an admin",
+        description: "Admin privileges required",
+      });
+      router.push("/")
+    }
+  }, [user]);
+
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [allUsers, setAllUsers] = React.useState<UserInterface[]>([]);
+  const [managers, setManagers] = React.useState<UserInterface[]>([]);
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
@@ -93,23 +107,27 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } else {
       // call api here
       try {
-        adminSignup({
+        if(user?.token)
+        updateUser(user?.token,{
           name: formik.values.firstname + " " + formik.values.lastname,
           email: formik.values.email,
-          password: formik.values.password,
           phone: formik.values.phone,
           department: formik.values.department,
           role: formik.values.role,
-          authLevel: formik.values.authLevel,
-          adminKey: formik.values.adminKey,
+          manager: {
+            name: formik.values.managerName,
+            id: formik.values.managerID,
+          },
+          userID:formik.values._id
         }).then((res) => {
           if (res.success) {
+            console.log(res);
             toast({
               title: "Success",
               description: res.message,
             });
-            router.push("/login");
-          } else
+          } 
+          else
             toast({
               title: "Error occured",
               description: res.error,
@@ -124,23 +142,86 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       }
     }
   }
-
+  // fetching all users and managers
   useEffect(() => {
-    if(formik.values.role === 'Team Lead'){
-      formik.setFieldValue('authLevel','1')
+    if (user?.token) {
+      getAllUsers(user?.token).then((res) => {
+        if (res.success) {
+          setAllUsers(res.data);
+        } else {
+          toast({
+            title: "Error occured",
+            description: res.error,
+          });
+        }
+      });
+
+      // get managers
+      getManagers(user?.token).then((res) => {
+        if (res.success) {
+          setManagers(res.data);
+        } else {
+          toast({
+            title: "Error occured",
+            description: res.error,
+          });
+        }
+      });
     }
-    else if(formik.values.role === 'Manager'){
-      formik.setFieldValue('authLevel','2')
-    }
-    else if(formik.values.role === 'CEO'){
-      formik.setFieldValue('authLevel','3')
-    }
-  }, [formik.values.role]);
+
+  }, []);
+
+  // setting values as per user selected
+  useEffect(() => {
+    
+    const selectedUser = allUsers.find((item) => item?._id === formik.values._id);
+    console.log("selected user is",selectedUser)
+      formik.setFieldValue('firstname',selectedUser?.name.split(' ')[0])
+      formik.setFieldValue('lastname',selectedUser?.name.split(' ')[1])
+      formik.setFieldValue('email',selectedUser?.email)
+      formik.setFieldValue('phone',selectedUser?.phone)
+      formik.setFieldValue('department',selectedUser?.department)
+      formik.setFieldValue('role',selectedUser?.role)
+
+  }, [formik.values._id]);
+
+  // setting manager id
+  useEffect(() => {
+    console.log("manager is",formik.values.manager)
+    const selectedManager = managers.find((item) => item?._id === formik.values.manager);
+    console.log("selected manager is",selectedManager)
+    formik.setFieldValue('managerID',selectedManager?.employeeID)
+    formik.setFieldValue('managerName',selectedManager?.name)
+  }, [formik.values.manager]);
+
+  
+
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
+            
+            <Select 
+            onValueChange={(value) => formik.setFieldValue('_id',value)}  
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select User" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {allUsers.map((user: any, key: any) => {
+                    return (
+                      <SelectItem value={user._id} key={key}>
+                        {user.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            
+            
             <div className="flex gap-1 mx">
               <Label className="sr-only" htmlFor="firstname">
                 First Name
@@ -189,23 +270,47 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               onChange={formik.handleChange}
               value={formik.values.email}
             />
+
+            <Select 
+            onValueChange={(value) => formik.setFieldValue('manager',value)}  
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Manager" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {managers.map((manager: any, key: any) => {
+                    return (
+                      <SelectItem value={manager._id} key={key}>
+                        {manager.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
             <div className="flex justify-center gap-1">
-              <Select  
-                onValueChange={(value) => formik.setFieldValue('role',value)}              
-                >
+              <Select
+                onValueChange={(value) => formik.setFieldValue("role", value)}
+              >
                 <SelectTrigger className="w-[50%]">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Manager">Manager</SelectItem>
-                    <SelectItem value="Team Lead">Team Lead</SelectItem>
-                    <SelectItem value="CEO">CEO</SelectItem>
+                    <SelectItem value="Intern">Intern</SelectItem>
+                    <SelectItem value="Junior Developer">Junior Developer</SelectItem>
+                    <SelectItem value="Senior Developer">Senior Developer</SelectItem>
+                    <SelectItem value="Junior HR">Junior HR</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
 
-              <Select onValueChange={(value) => formik.setFieldValue('department',value)}              
+              <Select
+                onValueChange={(value) =>
+                  formik.setFieldValue("department", value)
+                }
               >
                 <SelectTrigger className="w-[50%]">
                   <SelectValue placeholder="Department" />
@@ -222,61 +327,18 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               </Select>
             </div>
 
-              <Label className="sr-only" htmlFor="phone">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                placeholder="Phone"
-                type="text"
-                disabled={isLoading}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.phone}
-              />
-
-            <Label className="sr-only" htmlFor="password">
-              Password
+            <Label className="sr-only" htmlFor="phone">
+              Phone
             </Label>
             <Input
-              id="password"
-              placeholder="Password"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect="off"
+              id="phone"
+              placeholder="Phone"
+              type="text"
               disabled={isLoading}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.password}
+              value={formik.values.phone}
             />
-            <Label className="sr-only" htmlFor="passwordConfirm">
-              Confirm Password
-            </Label>
-            <Input
-              id="passwordConfirm"
-              placeholder="Confirm Password"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="password"
-              autoCorrect="off"
-              disabled={isLoading}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.passwordConfirm}
-            />
-            <Label className="sr-only" htmlFor="adminKey">
-                Admin Key
-              </Label>
-              <Input
-                id="adminKey"
-                placeholder="Admin Key"
-                type="password"
-                disabled={isLoading}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.adminKey}
-              />
           </div>
           <Button disabled={isLoading}>
             {isLoading && (
@@ -288,23 +350,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 className="mr-2 h-4 w-4 animate-spin"
               />
             )}
-            Sign Up
+            Update user
           </Button>
         </div>
       </form>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Already have an account ?
-          </span>
-        </div>
-      </div>
-      <Button variant="link" type="button" disabled={isLoading}>
-        <Link href="/login">Login</Link>
-      </Button>
+      
     </div>
   );
 }
