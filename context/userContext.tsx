@@ -14,6 +14,7 @@ export interface UserInterface {
     id: string
   }
   phone:number
+  _id:string
 }
 const userContext = createContext<{
   user: UserInterface | null

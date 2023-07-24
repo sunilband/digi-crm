@@ -29,7 +29,7 @@ function Navbar() {
   console.log("user from nav",user)
   const logout = () => {
   destroyCookie(null, COOKIE_KEYS.ACCESS_TOKEN);
-  setUser(null);  
+  setUser(null); 
   };
 
   return (
@@ -52,31 +52,47 @@ function Navbar() {
                     voluptatum facere ullam accusantium?
                   </ListItem>
                   </Link>:null}
-                  <ListItem href="/how-to-use" title="Dashboard">
+
+                  <Link href="/tasks">
+                  <ListItem  title="Tasks">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                     Nostrum eos sed beatae iure ipsam veritatis, eaque
                     voluptatum facere ullam accusantium?
                   </ListItem>
-                  <ListItem href="/Disclaimer" title="Customers">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Fuga, quas. Rerum, ipsa mollitia accusamus laborum
-                    voluptatum possimus amet nesciunt architecto?
+                  </Link>
+
+                   <Link href="/edituser">
+                  <ListItem  title="Edit User">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Nostrum eos sed beatae iure ipsam veritatis, eaque
+                    voluptatum facere ullam accusantium?
                   </ListItem>
-                  <ListItem href="/Contact" title="Sales">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Non
-                    nisi accusamus neque quibusdam incidunt aliquam repellendus
-                    quos eius nemo error.{" "}
+                  </Link>
+
+                  <Link href="/edituser">
+                  <ListItem  title="Edit User">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Nostrum eos sed beatae iure ipsam veritatis, eaque
+                    voluptatum facere ullam accusantium?
                   </ListItem>
-                  <ListItem href="/about" title="Tasks">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Aperiam blanditiis sint atque dignissimos cupiditate! Hic
-                    quis eligendi nisi aut tempora?
+                  </Link>
+
+                  <Link href="/edituser">
+                  <ListItem  title="Edit User">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Nostrum eos sed beatae iure ipsam veritatis, eaque
+                    voluptatum facere ullam accusantium?
                   </ListItem>
-                  <ListItem href="/about" title="Leads">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Aperiam blanditiis sint atque dignissimos cupiditate! Hic
-                    quis eligendi nisi aut tempora?
+                  </Link>
+
+                  <Link href="/edituser">
+                  <ListItem  title="Edit User">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Nostrum eos sed beatae iure ipsam veritatis, eaque
+                    voluptatum facere ullam accusantium?
                   </ListItem>
+                  </Link>
+
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>

@@ -41,27 +41,20 @@ export default function RootLayout({
   const [user, setUser] = useState<UserInterface | null>(null);
   // set token state
   const [token, setToken] = useState<string | null>(null);
-  const checkToken=["/login","/signup","/","/edituser"]
+  const redirect=["/login"]
 
   const tokenCkecker=(tokenData:string | null)=>{
-
-    if(user?.token!==undefined)
-    {
-      console.log("token is not null",user?.token)
-      return;
-    }
 
     if (tokenData === null) {
       return router.push("/login");
     }
 
-    if (tokenData !== null && token === null) {
-      setToken(tokenData);
-    }
-
-    if (token) {
+    setToken(tokenData);
+    const originalPage=page
       try {
-        getUser(token).then((res) => {
+        if(token!==null)
+        getUser(token)
+        .then((res) => {
           if (!res) {
             router.push("/login");
           }
@@ -71,13 +64,15 @@ export default function RootLayout({
              ...data,
              token: token,
             });
-            router.push("/");
+            if(redirect.includes(originalPage)===true)
+            {
+              router.push("/");
+            }
           }
         });
       } catch (error) {
         console.log("no user cookie found", error);
       }
-    }
   }
   
   useEffect(() => {
@@ -118,7 +113,6 @@ export default function RootLayout({
     console.log("this is token",token)
     console.log("this is tokenData",tokenData)
 
-    if(checkToken.includes(page))
     tokenCkecker(tokenData);
     
   }, [token]);

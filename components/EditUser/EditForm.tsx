@@ -173,7 +173,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   // setting values as per user selected
   useEffect(() => {
-    
+    // @ts-ignore
     const selectedUser = allUsers.find((item) => item?._id === formik.values._id);
     console.log("selected user is",selectedUser)
       formik.setFieldValue('firstname',selectedUser?.name.split(' ')[0])
@@ -188,6 +188,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   // setting manager id
   useEffect(() => {
     console.log("manager is",formik.values.manager)
+    // @ts-ignore
     const selectedManager = managers.find((item) => item?._id === formik.values.manager);
     console.log("selected manager is",selectedManager)
     formik.setFieldValue('managerID',selectedManager?.employeeID)
@@ -201,7 +202,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
-            
             <Select 
             onValueChange={(value) => formik.setFieldValue('_id',value)}  
             >
@@ -233,7 +233,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 autoCapitalize="none"
                 autoComplete="email"
                 autoCorrect="off"
-                disabled={isLoading}
+                disabled={true}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 value={formik.values.firstname}
@@ -248,7 +248,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 autoCapitalize="none"
                 autoComplete="email"
                 autoCorrect="off"
-                disabled={isLoading}
+                disabled={true}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 value={formik.values.lastname}
