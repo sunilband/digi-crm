@@ -147,7 +147,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (user?.token) {
       getAllUsers(user?.token).then((res) => {
         if (res.success) {
-          setAllUsers(res.data);
+          const data=res.data
+          const filteredData=data.filter((item:any)=>item.admin!==true)
+          setAllUsers(filteredData);
         } else {
           toast({
             title: "Error occured",

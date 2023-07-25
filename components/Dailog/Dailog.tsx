@@ -30,7 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getAllUsers, getSuperUsers } from "@/utils/apiRequests/adminFunctions";
+import { getAllUsers} from "@/utils/apiRequests/adminFunctions";
 import { UserInterface } from "@/context/userContext";
 import userContext from "@/context/userContext";
 import { useContext } from "react";
@@ -92,17 +92,13 @@ const DailogBox = ({ open, setOpen }: Props) => {
   //calling create api
   const addTask = () => {
     const formikErrors = Object.values(formik.errors);
-    console.log("stage 1")
     if (formikErrors.length > 0) {
-      console.log("stage 2")
       return toast({
         title: "Fill the form correctly",
         description: formikErrors.join(" , "),
       });
     }
-    console.log("stage 3")
     if (user?.token) {
-      console.log("stage 4")
       
       createTask(user?.token, {
         taskName: formik.values.taskName,
@@ -127,16 +123,14 @@ const DailogBox = ({ open, setOpen }: Props) => {
           });
         } 
         if(res.error) {
-          console.log(res)
-          // toast({
-          //   title: "Error occured",
-          //   description: res.error,
-          // });
+          toast({
+            title: "Error occured",
+            description: res.error,
+          });
         }
       });
     }
   };
-  console.log(formik.values);
 
   useEffect(() => {
     if (user?.token) {
@@ -275,6 +269,9 @@ const DailogBox = ({ open, setOpen }: Props) => {
                   mode="single"
                   selected={date}
                   onSelect={setDate}
+                  // onSelect={
+                  //   (date) => setDate(date)
+                  // }
                   initialFocus
                 />
               </PopoverContent>

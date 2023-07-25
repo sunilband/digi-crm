@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function LoginForm() {
   return (
     <>
-      <div className="flex justify-evenly items-center h-screen flex-wrap p-2">
+      <div className="w-screen flex justify-evenly items-center h-screen flex-wrap p-2">
         <div className="flex justify-center flex-col mt-20 sm:mt-0">
           {/* <div className='flex flex-col gap-1 justify-center text-center'>
           <h2 className='text-4xl font-bold tracking-wider'>Digi-CRM</h2>
