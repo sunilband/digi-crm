@@ -44,54 +44,43 @@ function Navbar() {
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-6 border w-[300px] md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]
                 ">
+
+                  <Link href="/">
+                  <ListItem  title="Dashboard">
+                    View and control all your essential data
+                  </ListItem>
+                  </Link>
+                  
+                  <Link href="/tasks">
+                  <ListItem  title="Tasks">
+                    Manage and track all your tasks and their progress
+                  </ListItem>
+                  </Link>
+
+                   <Link href="/customers">
+                  <ListItem  title="Customers">
+                    Keep track of all your customers 
+                  </ListItem>
+                  </Link>
+
+                  <Link href="/leads">
+                  <ListItem  title="Leads">
+                    Manage all your leads and their status
+                  </ListItem>
+                  </Link>
+
+                  <Link href="/sales">
+                  <ListItem  title="Sales">
+                    Manage all your sales and their status
+                  </ListItem>
+                  </Link>
+
                   {user?.admin?
                   <Link href="/edituser">
                   <ListItem  title="Edit User">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
+                   Edit data of employees
                   </ListItem>
                   </Link>:null}
-
-                  <Link href="/tasks">
-                  <ListItem  title="Tasks">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
-                  </ListItem>
-                  </Link>
-
-                   <Link href="/edituser">
-                  <ListItem  title="Edit User">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
-                  </ListItem>
-                  </Link>
-
-                  <Link href="/edituser">
-                  <ListItem  title="Edit User">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
-                  </ListItem>
-                  </Link>
-
-                  <Link href="/edituser">
-                  <ListItem  title="Edit User">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
-                  </ListItem>
-                  </Link>
-
-                  <Link href="/edituser">
-                  <ListItem  title="Edit User">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Nostrum eos sed beatae iure ipsam veritatis, eaque
-                    voluptatum facere ullam accusantium?
-                  </ListItem>
-                  </Link>
 
                 </ul>
               </NavigationMenuContent>

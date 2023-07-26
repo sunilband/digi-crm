@@ -1,26 +1,41 @@
-type Payment = {
-    id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string,
-    priority: number,
+export type Task = {
+    _id: string
+    taskName: string
+
+    taskDescription: string
+
+    priority:"Low" |
+    "Medium" |
+    "High" |
+    "Urgent" 
+
+    status?: "Not Started" |
+    "In Progress" |
+    "Testing" |
+    "Awaiting Feedback" |
+    "Complete" 
+
+    tags?: string[]
+
+    assignedBy: {
+        name: string,
+        id: string
+      },
+
+    assignedTo: {
+        name: string,
+        id: string
+      },
+
+    assignedTime: Date | string
+
+    startDate?: Date | string
+    dueDate: Date | string
+    __v: number | string
   }
-  
-  export const payments: Payment[] = [
-    {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-      priority: 2,
-    },
-    {
-      id: "489e1d42",
-      amount: 125,
-      status: "processing",
-      email: "example@gmail.com",
-      priority: 1,
-    },
+
+
     
-  ]
+
+    
   

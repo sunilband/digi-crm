@@ -69,7 +69,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
     }),
     onSubmit: (values) => {},
   });
-  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<UserInterface[]>([]);
   const { toast } = useToast();
   const { user } = useContext(userContext);
   const [date, setDate] = useState<Date>();

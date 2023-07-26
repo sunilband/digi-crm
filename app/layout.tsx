@@ -11,7 +11,7 @@ import userContext from "../context/userContext";
 import { UserInterface } from "../context/userContext";
 
 import clsx from "clsx";
-import Dailog from "@/components/Dailog/Dailog";
+import Dailog from "@/components/TasksSection/Dailog/Dailog";
 import { setCookie, parseCookies } from "nookies";
 import { getCookie } from "@/utils/getCookie";
 import { COOKIE_KEYS } from "@/utils/cookieEnums";

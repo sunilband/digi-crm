@@ -1,6 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* style for scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
  
 @layer base {
   :root {
@@ -37,20 +61,20 @@
   }
  
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 240 1% 85%;
+
+    --muted: 240 6% 10%;
+    --muted-foreground: 240 1% 85%;
  
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
- 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 240 1% 85%;
  
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
  
-    /* --border: 217.2 32.6% 17.5%; */
-    --border: 217.2 32.6% 25%;
+    /* --border: 217.2 32.6% 25%; */
+    --border: 240 4% 16%;
     --input: 217.2 32.6% 25%;
  
     --primary: 210 40% 98%;
