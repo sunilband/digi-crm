@@ -1,81 +1,80 @@
-
+// @ts-nocheck
 // signup user API
-export const userSignup = async (data:any) => {
-
+export const userSignup = async (data: any) => {
   try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_REGISTER_USER}`, {
-          method: 'POST',
-          headers: {
-              // Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-              
-          },
-          body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      return responseData
+    const response = await fetch(`${process.env.NEXT_PUBLIC_REGISTER_USER}`, {
+      method: "POST",
+      headers: {
+        // Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    return responseData;
   } catch (error) {
-    console.log("signup error",error)
+    console.log("signup error", error);
   }
 };
 
 // signup Admin API
-export const adminSignup = async (data:any) => {
-
+export const adminSignup = async (data: any) => {
   try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_ADMIN_REGISTER_USER}`, {
-          method: 'POST',
-          headers: {
-              // Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      return responseData
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ADMIN_REGISTER_USER}`,
+      {
+        method: "POST",
+        headers: {
+          // Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      },
+    );
+    const responseData = await response.json();
+    return responseData;
   } catch (error) {
-    console.log("signup error",error)
+    console.log("signup error", error);
   }
 };
 
-
 // login user API
-export const userLogin = async (data:any) => {
-  console.log("login data",process.env.NEXT_PUBLIC_LOGIN_USER)
+export const userLogin = async (data: any) => {
   try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LOGIN_USER}`, {
-          method: 'POST',
-          headers: {
-              // Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      return responseData
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LOGIN_USER}`, {
+      method: "POST",
+      headers: {
+        // Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const responseData = await response.json();
+    return responseData;
   } catch (error) {
-    console.log("Login error",error)
+    console.log("Login error", error);
   }
 };
 
 // get user API
-export const getUser = async (token:string) => {
-  console.log(process.env.NEXT_PUBLIC_USER_INFO)
+export const getUser = async (token: string) => {
   try {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token}`);
-      
+
     var requestOptions = {
-      method: 'GET',
+      method: "GET",
       headers: myHeaders,
-      redirect: 'follow'
+      redirect: "follow",
     };
     // @ts-ignore
-    const response =await fetch(process.env.NEXT_PUBLIC_USER_INFO, requestOptions)
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_USER_INFO,
+      requestOptions,
+    );
     const responseData = response.json();
-    return responseData
-    
+    return responseData;
   } catch (error) {
-    console.log("Get user error",error)
+    console.log("Get user error", error);
   }
 };

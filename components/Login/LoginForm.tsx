@@ -1,16 +1,16 @@
-'use client'
-import { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
+"use client";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
-import { buttonVariants } from '../../components/ui/button'
-import Login from './Login'
-import logo from '../../public/images/digiventryLogo.png'
+import { buttonVariants } from "../../components/ui/button";
+import Login from "./Login";
+import logo from "../../public/images/digiventryLogo.png";
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.',
-}
+  title: "Authentication",
+  description: "Authentication forms built using the components.",
+};
 
 export default function LoginForm() {
   return (
@@ -26,7 +26,7 @@ export default function LoginForm() {
             alt="loginImage"
             width={400}
             height={400}
-            className='dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert hover:scale-105 transition-all duration-300 ease-in-out'
+            className="dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert hover:scale-105 transition-all duration-300 ease-in-out"
           />
         </div>
         <hr className="border h-80 hidden md:inline-block" />
@@ -42,14 +42,14 @@ export default function LoginForm() {
             </div>
             <Login />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By logging in, you agree to our{' '}
+              By logging in, you agree to our{" "}
               <Link
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
                 Terms of Service
-              </Link>{' '}
-              and{' '}
+              </Link>{" "}
+              and{" "}
               <Link
                 href="/privacy"
                 className="underline underline-offset-4 hover:text-primary"
@@ -62,5 +62,5 @@ export default function LoginForm() {
         </div>
       </div>
     </>
-  )
+  );
 }

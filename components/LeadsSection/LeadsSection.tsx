@@ -178,7 +178,8 @@ const TaskSection = (props: Props) => {
           <div className="capitalize">
             {
               // @ts-ignore
-              row.getValue(section == "myLeads" ? "assignedBy" : "assignedTo")?.name
+              row.getValue(section == "myLeads" ? "assignedBy" : "assignedTo")
+                ?.name
             }
           </div>
         </>
@@ -229,7 +230,12 @@ const TaskSection = (props: Props) => {
       cell: ({ row }) => (
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline">Update</Button>
+            <Button
+              variant="default"
+              className="capitalize hover:border-slate-900 dark:hover:border-green-200 bg-slate-600 dark:bg-[#212125] dark:text-white dark:hover:bg-black"
+            >
+              Update
+            </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80">
             <div className="grid gap-4">
@@ -251,7 +257,7 @@ const TaskSection = (props: Props) => {
                             task.status = value;
                             return task;
                           } else return task;
-                        })
+                        }),
                       );
                     }}
                   >
@@ -274,7 +280,7 @@ const TaskSection = (props: Props) => {
                         variant={"outline"}
                         className={cn(
                           "col-span-2 justify-start text-left font-normal",
-                          !date && "text-muted-foreground"
+                          !date && "text-muted-foreground",
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -295,7 +301,7 @@ const TaskSection = (props: Props) => {
                                 task.lastContacted = date;
                                 return task;
                               } else return task;
-                            })
+                            }),
                           );
                           console.log(date, data);
                         }}
@@ -328,8 +334,8 @@ const TaskSection = (props: Props) => {
         <>
           {/* @ts-ignore */}
           <Button
-            variant="outline"
-            className="capitalize hover:border-slate-900 dark:hover:border-green-200"
+            variant="default"
+            className="capitalize hover:border-slate-900 dark:hover:border-green-200 bg-slate-600 dark:bg-[#212125] dark:text-white dark:hover:bg-black "
             onClick={() => {
               try {
                 if (user?.token)
@@ -415,7 +421,7 @@ const TaskSection = (props: Props) => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -454,10 +460,10 @@ const TaskSection = (props: Props) => {
       <div className="flex justify-center items-center flex-col ">
         <DailogBox open={openValue} setOpen={setOpenValue} />
         {/* task summary section */}
-        <div className="pt-28  w-[95%] ">
+        <div className="pt-20  w-[95%] ">
           <div className="space-y-1 flex justify-between">
-            <h2 className="font-medium leading-none text-lg tracking-widest flex items-end">
-              Tasks Summary
+            <h2 className="leading-none text-4xl font-semibold tracking-widest flex items-end">
+              Leads Summary
             </h2>
             <div>
               <TabsList className="self-end mr-2">
@@ -476,36 +482,23 @@ const TaskSection = (props: Props) => {
           </div>
           <Separator className="my-4" />
           <div className="flex h-5 items-center space-x-4 text-sm ">
-            <h3 className="tracking-widest text-green-500 font-bold">Done</h3>
-            <h4 className="font-[1000]">
+            <h3 className="tracking-widest text-green-500 font-bold text-lg">
+              Done
+            </h3>
+            <h4 className="font-[800] text-xl">
               {section === "myLeads"
                 ? myLeadStats.done
                 : assignedLeadStats.done}
             </h4>
             <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-yellow-500 font-bold">
+            <h3 className="tracking-widest text-yellow-500 font-bold text-lg">
               Customer
             </h3>
-            <h4 className="font-[1000]">
+            <h4 className="font-[800] text-xl">
               {section === "myLeads"
                 ? myLeadStats.customer
                 : assignedLeadStats.customer}
             </h4>
-            {/* <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-black dark:text-white font-bold">
-              Testing
-            </h3>
-            <h4 className="font-[1000]">{section==="myLeads"?myLeadStats.testing:assignedLeadStats.testing}</h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-sky-500 font-bold">
-              In Progress
-            </h3>
-            <h4 className="font-[1000]">{section==="myLeads"?myLeadStats.inProgress:assignedLeadStats.inProgress}</h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-orange-500 font-bold">
-              Not Started
-            </h3>
-            <h4 className="font-[1000]">{section==="myLeads"?myLeadStats.notStarted:assignedLeadStats.notStarted}</h4> */}
           </div>
         </div>
         {/* task summary section end*/}
@@ -513,7 +506,7 @@ const TaskSection = (props: Props) => {
         <div className="w-[95%]">
           <div className="flex items-center py-4 ">
             <Input
-              placeholder="Search task ..."
+              placeholder="Search lead ..."
               value={
                 (table.getColumn("name")?.getFilterValue() as string) ?? ""
               }
@@ -571,7 +564,7 @@ const TaskSection = (props: Props) => {
           {/* my tasks */}
           <TabsContent value={section}>
             <div className="rounded-md border">
-              <Table className="">
+              <Table className="dark:bg-[#111112c5]">
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -582,7 +575,7 @@ const TaskSection = (props: Props) => {
                               ? null
                               : flexRender(
                                   header.column.columnDef.header,
-                                  header.getContext()
+                                  header.getContext(),
                                 )}
                           </TableHead>
                         );
@@ -596,12 +589,13 @@ const TaskSection = (props: Props) => {
                       <TableRow
                         key={row.id}
                         data-state={row.getIsSelected() && "selected"}
+                        className="hover:dark:bg-[#0d0d0e]"
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
-                              cell.getContext()
+                              cell.getContext(),
                             )}
                           </TableCell>
                         ))}

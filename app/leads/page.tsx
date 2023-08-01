@@ -1,8 +1,8 @@
-import LeadsSection from '@/components/LeadsSection/LeadsSection'
+import LeadsSection from "@/components/LeadsSection/LeadsSection";
 export default function Home() {
   return (
     <div className="">
-      <LeadsSection/>
+      <LeadsSection />
     </div>
-  )
+  );
 }

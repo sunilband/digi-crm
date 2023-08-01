@@ -66,7 +66,7 @@ const Login = (props: Props) => {
             path: "/",
           });
           try {
-            let token=res.token
+            let token = res.token;
             getUser(token).then((res) => {
               const data = res;
               setUser({

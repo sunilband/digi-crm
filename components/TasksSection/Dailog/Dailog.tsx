@@ -30,7 +30,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { getAllUsers} from "@/utils/apiRequests/adminFunctions";
+import { getAllUsers } from "@/utils/apiRequests/adminFunctions";
 import { UserInterface } from "@/context/userContext";
 import userContext from "@/context/userContext";
 import { useContext } from "react";
@@ -99,7 +99,6 @@ const DailogBox = ({ open, setOpen }: Props) => {
       });
     }
     if (user?.token) {
-      
       createTask(user?.token, {
         taskName: formik.values.taskName,
         taskDesc: formik.values.taskDesc,
@@ -111,7 +110,6 @@ const DailogBox = ({ open, setOpen }: Props) => {
           formik.values.tags !== ""
             ? [...formik.values.tags.split(",")]
             : ["N/A"],
-
       }).then((res) => {
         if (res.success) {
           // clear form values
@@ -121,8 +119,8 @@ const DailogBox = ({ open, setOpen }: Props) => {
             title: "Success",
             description: "Task created successfully",
           });
-        } 
-        if(res.error) {
+        }
+        if (res.error) {
           toast({
             title: "Error occured",
             description: res.error,
@@ -152,7 +150,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
       {/* <DialogTrigger asChild>
         <Button variant="outline">Edit Profile</Button>
       </DialogTrigger> */}
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <div className="">
             <DialogTitle>Add task</DialogTitle>
@@ -257,7 +255,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
                   variant={"outline"}
                   className={cn(
                     "w-[280px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    !date && "text-muted-foreground",
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />

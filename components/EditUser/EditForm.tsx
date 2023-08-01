@@ -28,7 +28,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useToast } from "@/components/ui/use-toast";
 import { adminSignup } from "@/utils/apiRequests/authFunctions";
-import { getAllUsers, getManagers, updateUser } from "@/utils/apiRequests/adminFunctions";
+import {
+  getAllUsers,
+  getManagers,
+  updateUser,
+} from "@/utils/apiRequests/adminFunctions";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -40,10 +44,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     phone: "",
     department: "",
     role: "",
-    manager:"",
-    _id:"",
-    managerID:"",
-    managerName:""
+    manager: "",
+    _id: "",
+    managerID: "",
+    managerName: "",
   };
 
   const formik = useFormik({
@@ -62,10 +66,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       department: Yup.string().required("Department Required"),
       role: Yup.string().required("Role Required"),
       manager: Yup.string().required("Manager Required"),
-      _id:Yup.string().required("_id required"),
+      _id: Yup.string().required("_id required"),
       managerID: Yup.string().required("Manager ID Required"),
       managerName: Yup.string().required("Manager Name Required"),
-
     }),
 
     onSubmit: (values) => {},
@@ -74,17 +77,16 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const { toast } = useToast();
   const { user, setUser } = useContext(userContext);
   const router = useRouter();
-  const page=usePathname()
+  const page = usePathname();
 
   // if not admin redirect to main page
   useEffect(() => {
-    if(!user?.admin)
-    {
+    if (!user?.admin) {
       toast({
         title: "Not an admin",
         description: "Admin privileges required",
       });
-      router.push("/")
+      router.push("/");
     }
   }, [user]);
 
@@ -107,32 +109,31 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } else {
       // call api here
       try {
-        if(user?.token)
-        updateUser(user?.token,{
-          name: formik.values.firstname + " " + formik.values.lastname,
-          email: formik.values.email,
-          phone: formik.values.phone,
-          department: formik.values.department,
-          role: formik.values.role,
-          manager: {
-            name: formik.values.managerName,
-            id: formik.values.managerID,
-          },
-          userID:formik.values._id
-        }).then((res) => {
-          if (res.success) {
-            console.log(res);
-            toast({
-              title: "Success",
-              description: res.message,
-            });
-          } 
-          else
-            toast({
-              title: "Error occured",
-              description: res.error,
-            });
-        });
+        if (user?.token)
+          updateUser(user?.token, {
+            name: formik.values.firstname + " " + formik.values.lastname,
+            email: formik.values.email,
+            phone: formik.values.phone,
+            department: formik.values.department,
+            role: formik.values.role,
+            manager: {
+              name: formik.values.managerName,
+              id: formik.values.managerID,
+            },
+            userID: formik.values._id,
+          }).then((res) => {
+            if (res.success) {
+              console.log(res);
+              toast({
+                title: "Success",
+                description: res.message,
+              });
+            } else
+              toast({
+                title: "Error occured",
+                description: res.error,
+              });
+          });
       } catch (error: any) {
         console.log(error);
         toast({
@@ -147,8 +148,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     if (user?.token) {
       getAllUsers(user?.token).then((res) => {
         if (res.success) {
-          const data=res.data
-          const filteredData=data.filter((item:any)=>item.admin!==true)
+          const data = res.data;
+          const filteredData = data.filter((item: any) => item.admin !== true);
           setAllUsers(filteredData);
         } else {
           toast({
@@ -170,42 +171,42 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         }
       });
     }
-
   }, []);
 
   // setting values as per user selected
   useEffect(() => {
     // @ts-ignore
-    const selectedUser = allUsers.find((item) => item?._id === formik.values._id);
-    console.log("selected user is",selectedUser)
-      formik.setFieldValue('firstname',selectedUser?.name.split(' ')[0])
-      formik.setFieldValue('lastname',selectedUser?.name.split(' ')[1])
-      formik.setFieldValue('email',selectedUser?.email)
-      formik.setFieldValue('phone',selectedUser?.phone)
-      formik.setFieldValue('department',selectedUser?.department)
-      formik.setFieldValue('role',selectedUser?.role)
-
+    const selectedUser = allUsers.find(
+      (item) => item?._id === formik.values._id,
+    );
+    console.log("selected user is", selectedUser);
+    formik.setFieldValue("firstname", selectedUser?.name.split(" ")[0]);
+    formik.setFieldValue("lastname", selectedUser?.name.split(" ")[1]);
+    formik.setFieldValue("email", selectedUser?.email);
+    formik.setFieldValue("phone", selectedUser?.phone);
+    formik.setFieldValue("department", selectedUser?.department);
+    formik.setFieldValue("role", selectedUser?.role);
   }, [formik.values._id]);
 
   // setting manager id
   useEffect(() => {
-    console.log("manager is",formik.values.manager)
+    console.log("manager is", formik.values.manager);
     // @ts-ignore
-    const selectedManager = managers.find((item) => item?._id === formik.values.manager);
-    console.log("selected manager is",selectedManager)
-    formik.setFieldValue('managerID',selectedManager?.employeeID)
-    formik.setFieldValue('managerName',selectedManager?.name)
+    const selectedManager = managers.find(
+      (item) => item?._id === formik.values.manager,
+    );
+    console.log("selected manager is", selectedManager);
+    formik.setFieldValue("managerID", selectedManager?.employeeID);
+    formik.setFieldValue("managerName", selectedManager?.name);
   }, [formik.values.manager]);
-
-  
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
-            <Select 
-            onValueChange={(value) => formik.setFieldValue('_id',value)}  
+            <Select
+              onValueChange={(value) => formik.setFieldValue("_id", value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select User" />
@@ -222,8 +223,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            
-            
+
             <div className="flex gap-1 mx">
               <Label className="sr-only" htmlFor="firstname">
                 First Name
@@ -273,8 +273,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               value={formik.values.email}
             />
 
-            <Select 
-            onValueChange={(value) => formik.setFieldValue('manager',value)}  
+            <Select
+              onValueChange={(value) => formik.setFieldValue("manager", value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Manager" />
@@ -302,8 +302,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value="Intern">Intern</SelectItem>
-                    <SelectItem value="Junior Developer">Junior Developer</SelectItem>
-                    <SelectItem value="Senior Developer">Senior Developer</SelectItem>
+                    <SelectItem value="Junior Developer">
+                      Junior Developer
+                    </SelectItem>
+                    <SelectItem value="Senior Developer">
+                      Senior Developer
+                    </SelectItem>
                     <SelectItem value="Junior HR">Junior HR</SelectItem>
                   </SelectGroup>
                 </SelectContent>
@@ -356,7 +360,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </Button>
         </div>
       </form>
-      
     </div>
   );
 }

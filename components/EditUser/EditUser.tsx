@@ -1,16 +1,16 @@
-'use client'
-import { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import loginImage from '../../public/svgs/loginImage.svg'
-import outerMandala from '../../public/svgs/outerMandala.svg'
-import { UserAuthForm } from './EditForm'
-import logo from '../../public/images/digiventryLogo.png'
+"use client";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import loginImage from "../../public/svgs/loginImage.svg";
+import outerMandala from "../../public/svgs/outerMandala.svg";
+import { UserAuthForm } from "./EditForm";
+import logo from "../../public/images/digiventryLogo.png";
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.',
-}
+  title: "Authentication",
+  description: "Authentication forms built using the components.",
+};
 
 export default function EditUser() {
   return (
@@ -21,13 +21,13 @@ export default function EditUser() {
           <h2 className='text-4xl font-bold tracking-wider'>Digi-CRM</h2>
           <p>Digiventry Technologies and Marketing PVT. LTD</p>
           </div> */}
-         
+
           <Image
             src={logo}
             alt="loginImage"
             width={400}
             height={400}
-            className='dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert hover:scale-105 transition-all duration-300 ease-in-out'
+            className="dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert hover:scale-105 transition-all duration-300 ease-in-out"
           />
         </div>
         <hr className="border h-80 hidden md:inline-block" />
@@ -46,5 +46,5 @@ export default function EditUser() {
         </div>
       </div>
     </>
-  )
+  );
 }

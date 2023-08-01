@@ -63,9 +63,8 @@ const timeParser = (date: string) => {
   return dateObj.toLocaleTimeString();
 };
 
-type Props = {}
+type Props = {};
 const TaskSection = (props: Props) => {
-
   const { toast } = useToast();
   const [section, setSection] = React.useState<string>("myTask");
   const [data, setData] = React.useState<Task[]>([]);
@@ -78,8 +77,8 @@ const TaskSection = (props: Props) => {
     awaitingFeedback: 0,
     complete: 0,
   });
-  const [myTaskStats,setMyTaskStats]=React.useState<any>({})
-  const [assignedTaskStats,setAssignedTaskStats]=React.useState<any>({})
+  const [myTaskStats, setMyTaskStats] = React.useState<any>({});
+  const [assignedTaskStats, setAssignedTaskStats] = React.useState<any>({});
   const { user } = useContext(userContext);
   const [refresh, setRefresh] = React.useState<boolean>(false);
 
@@ -127,14 +126,18 @@ const TaskSection = (props: Props) => {
       ),
     },
     {
-      accessorKey: section=="myTask"?"assignedBy":"assignedTo",
-      header: section=="myTask"?"Assigned By":"Assigned To",
+      accessorKey: section == "myTask" ? "assignedBy" : "assignedTo",
+      header: section == "myTask" ? "Assigned By" : "Assigned To",
       cell: ({ row }) => (
         <>
-        {/* @ts-ignore */}
-        <div className="capitalize">{row.getValue(section=="myTask"?"assignedBy":"assignedTo")?.name}</div>
+          {/* @ts-ignore */}
+          <div className="capitalize">
+            {
+              row.getValue(section == "myTask" ? "assignedBy" : "assignedTo")
+                ?.name
+            }
+          </div>
         </>
-        
       ),
     },
     {
@@ -206,7 +209,7 @@ const TaskSection = (props: Props) => {
                     task.status = value;
                     return task;
                   } else return task;
-                })
+                }),
               );
             }}
           >
@@ -257,31 +260,30 @@ const TaskSection = (props: Props) => {
             onClick={() => {
               try {
                 if (user?.token)
-                updateTask(user?.token, {
-                  _id: row.getValue("_id"),
-                  status: row.getValue("status"),
-                })
-                  .then((res) => {
-                    if (res.success) {
-                      toast({
-                        title: "Success",
-                        description: res.message,
-                      });
-                    }
-                    setRefresh(!refresh);
+                  updateTask(user?.token, {
+                    _id: row.getValue("_id"),
+                    status: row.getValue("status"),
                   })
-                  .catch((err) => {
-                    toast({
-                      title: "Error occured",
-                      description: err.error,
+                    .then((res) => {
+                      if (res.success) {
+                        toast({
+                          title: "Success",
+                          description: res.message,
+                        });
+                      }
+                      setRefresh(!refresh);
+                    })
+                    .catch((err) => {
+                      toast({
+                        title: "Error occured",
+                        description: err.error,
+                      });
                     });
-                  });
               } catch (error) {
                 toast({
                   title: "Error occured",
                 });
               }
-              
             }}
           >
             Save
@@ -295,13 +297,11 @@ const TaskSection = (props: Props) => {
     if (user)
       getTasks(user?.token)
         .then((res) => {
-          
-          if(section==="myTask"){
+          if (section === "myTask") {
             setMyTasks(res.data.myTasks);
             setData(res.data.myTasks);
-
           }
-          if(section==="assigned"){
+          if (section === "assigned") {
             setAssignedTasks(res.data.assignedTasks);
             setData(res.data.assignedTasks);
           }
@@ -325,14 +325,14 @@ const TaskSection = (props: Props) => {
             testing,
             awaitingFeedback,
             complete,
-          })
-          
+          });
+
           // re calculating for assigned tasks
-          notStarted = 0,
-            inProgress = 0,
-            testing = 0,
-            awaitingFeedback = 0,
-            complete = 0;
+          (notStarted = 0),
+            (inProgress = 0),
+            (testing = 0),
+            (awaitingFeedback = 0),
+            (complete = 0);
           res.data.assignedTasks.forEach((task: any) => {
             if (task.status == "Not Started") notStarted++;
             else if (task.status == "In Progress") inProgress++;
@@ -346,7 +346,7 @@ const TaskSection = (props: Props) => {
             testing,
             awaitingFeedback,
             complete,
-          })
+          });
         })
         .catch((err) => {
           toast({
@@ -358,7 +358,7 @@ const TaskSection = (props: Props) => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -397,9 +397,9 @@ const TaskSection = (props: Props) => {
       <div className="flex justify-center items-center flex-col ">
         <DailogBox open={openValue} setOpen={setOpenValue} />
         {/* task summary section */}
-        <div className="pt-28  w-[90%] ">
+        <div className="pt-20  w-[90%] ">
           <div className="space-y-1 flex justify-between">
-            <h2 className="font-medium leading-none text-lg tracking-widest flex items-end">
+            <h2 className="leading-none text-4xl font-semibold tracking-widest flex items-end">
               Tasks Summary
             </h2>
             <div>
@@ -419,30 +419,50 @@ const TaskSection = (props: Props) => {
           </div>
           <Separator className="my-4" />
           <div className="flex h-5 items-center space-x-4 text-sm ">
-            <h3 className="tracking-widest text-green-500 font-bold">
+            <h3 className="tracking-widest text-green-500 font-bold text-xl">
               Complete
             </h3>
-            <h4 className="font-[1000]">{section==="myTask"?myTaskStats.complete:assignedTaskStats.complete}</h4>
+            <h4 className="font-[800] text-lg">
+              {section === "myTask"
+                ? myTaskStats.complete
+                : assignedTaskStats.complete}
+            </h4>
             <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-yellow-500 font-bold">
+            <h3 className="tracking-widest text-yellow-500 font-bold text-xl">
               Awaiting Feedback
             </h3>
-            <h4 className="font-[1000]">{section==="myTask"?myTaskStats.awaitingFeedback:assignedTaskStats.awaitingFeedback}</h4>
+            <h4 className="font-[800] text-lg">
+              {section === "myTask"
+                ? myTaskStats.awaitingFeedback
+                : assignedTaskStats.awaitingFeedback}
+            </h4>
             <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-black dark:text-white font-bold">
+            <h3 className="tracking-widest text-black dark:text-white font-bold text-xl">
               Testing
             </h3>
-            <h4 className="font-[1000]">{section==="myTask"?myTaskStats.testing:assignedTaskStats.testing}</h4>
+            <h4 className="font-[800] text-lg">
+              {section === "myTask"
+                ? myTaskStats.testing
+                : assignedTaskStats.testing}
+            </h4>
             <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-sky-500 font-bold">
+            <h3 className="tracking-widest text-sky-500 font-bold text-xl">
               In Progress
             </h3>
-            <h4 className="font-[1000]">{section==="myTask"?myTaskStats.inProgress:assignedTaskStats.inProgress}</h4>
+            <h4 className="font-[800] text-lg">
+              {section === "myTask"
+                ? myTaskStats.inProgress
+                : assignedTaskStats.inProgress}
+            </h4>
             <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-orange-500 font-bold">
+            <h3 className="tracking-widest text-orange-500 font-bold text-xl">
               Not Started
             </h3>
-            <h4 className="font-[1000]">{section==="myTask"?myTaskStats.notStarted:assignedTaskStats.notStarted}</h4>
+            <h4 className="font-[800] text-lg">
+              {section === "myTask"
+                ? myTaskStats.notStarted
+                : assignedTaskStats.notStarted}
+            </h4>
           </div>
         </div>
         {/* task summary section end*/}
@@ -508,7 +528,7 @@ const TaskSection = (props: Props) => {
           {/* my tasks */}
           <TabsContent value={section}>
             <div className="rounded-md border">
-              <Table className="">
+              <Table className="dark:bg-[#111112c5]">
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -519,7 +539,7 @@ const TaskSection = (props: Props) => {
                               ? null
                               : flexRender(
                                   header.column.columnDef.header,
-                                  header.getContext()
+                                  header.getContext(),
                                 )}
                           </TableHead>
                         );
@@ -533,12 +553,13 @@ const TaskSection = (props: Props) => {
                       <TableRow
                         key={row.id}
                         data-state={row.getIsSelected() && "selected"}
+                        className="hover:dark:bg-[#0d0d0e]"
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>
                             {flexRender(
                               cell.column.columnDef.cell,
-                              cell.getContext()
+                              cell.getContext(),
                             )}
                           </TableCell>
                         ))}
@@ -585,7 +606,7 @@ const TaskSection = (props: Props) => {
         </div>
       </div>
     </Tabs>
-  )
-}
+  );
+};
 
-export default TaskSection
+export default TaskSection;

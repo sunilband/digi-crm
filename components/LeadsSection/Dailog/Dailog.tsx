@@ -299,7 +299,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
                     variant={"outline"}
                     className={cn(
                       "w-52 justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      !date && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />

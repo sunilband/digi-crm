@@ -1,8 +1,8 @@
-import TaskSection from '@/components/TasksSection/TaskSection'
+import TaskSection from "@/components/TasksSection/TaskSection";
 export default function Home() {
   return (
     <div className="">
-      <TaskSection/>
+      <TaskSection />
     </div>
-  )
+  );
 }

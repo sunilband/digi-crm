@@ -41,80 +41,43 @@ export default function RootLayout({
   const [user, setUser] = useState<UserInterface | null>(null);
   // set token state
   const [token, setToken] = useState<string | null>(null);
-  const redirect=["/login"]
+  const redirect = ["/login"];
 
-  const tokenCkecker=(tokenData:string | null)=>{
-
+  const tokenCkecker = (tokenData: string | null) => {
     if (tokenData === null) {
       return router.push("/login");
     }
 
     setToken(tokenData);
-    const originalPage=page
-      try {
-        if(token!==null)
-        getUser(token)
-        .then((res) => {
+    const originalPage = page;
+    try {
+      if (token !== null)
+        getUser(token).then((res) => {
           if (!res) {
             router.push("/login");
           }
-          if(res!==undefined){
+          if (res !== undefined) {
             const data = res;
             setUser({
-             ...data,
-             token: token,
+              ...data,
+              token: token,
             });
-            if(redirect.includes(originalPage)===true)
-            {
+            if (redirect.includes(originalPage) === true) {
               router.push("/");
             }
           }
         });
-      } catch (error) {
-        console.log("no user cookie found", error);
-      }
-  }
-  
+    } catch (error) {
+      console.log("no user cookie found", error);
+    }
+  };
+
   useEffect(() => {
     // checking if user in cookies
     const cookies = parseCookies();
     const tokenData = cookies.accessToken ? cookies.accessToken : null;
-    // if(page==='/')
-    // {
-    //   if (tokenData === null) {
-    //     router.push("/login");
-    //   }
-  
-    //   if (tokenData !== null && token === null) {
-    //     setToken(tokenData);
-    //   }
-  
-    //   if (token) {
-    //     try {
-    //       getUser(token).then((res) => {
-    //         if (!res) {
-    //           router.push("/login");
-    //         }
-    //         if(res!==undefined){
-    //           const data = res;
-    //           setUser({
-    //            ...data,
-    //            token: token,
-    //           });
-    //           router.push("/");
-    //         }
-    //       });
-    //     } catch (error) {
-    //       console.log("no user cookie found", error);
-    //     }
-    //   }
-      
-    // }
-    console.log("this is token",token)
-    console.log("this is tokenData",tokenData)
 
     tokenCkecker(tokenData);
-    
   }, [token]);
 
   return (
