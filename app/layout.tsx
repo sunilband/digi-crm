@@ -76,8 +76,7 @@ export default function RootLayout({
     // checking if user in cookies
     const cookies = parseCookies();
     const tokenData = cookies.accessToken ? cookies.accessToken : null;
-
-    tokenCkecker(tokenData);
+    if (page !== "/adminsignup") tokenCkecker(tokenData);
   }, [token]);
 
   return (

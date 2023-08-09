@@ -273,7 +273,7 @@ const ItemSection = (props: Props) => {
                   setOpenValue2(!openValue2);
                 }}
               >
-                Add Group
+                Add/Search Group
               </Button>
               <Button
                 variant="default"

@@ -47,25 +47,16 @@ export function Sidebar() {
   const [salesSectionOpen, setSalesSectionOpen] = React.useState(false);
 
   return (
-    <Sheet open={sidebarOpen}>
-      <SheetTrigger
-        asChild
-        onClick={() => {
-          setSidebarOpen(true);
-        }}
-      >
+    <Sheet
+    // open={sidebarOpen}
+    >
+      <SheetTrigger asChild>
         <p className="bg-transparent hover:bg-transparent cursor-pointer font-medium tracking-wide dark:text-[#D8D8D9] dark:hover:bg-[#1b212b] bg-opacity-30 px-4 py-2 rounded-md">
           Tools
         </p>
       </SheetTrigger>
 
       <SheetContent>
-        <X
-          className="h-4 w-4 absolute right-4 top-4 z-50"
-          onClick={() => {
-            setSidebarOpen(false);
-          }}
-        />
         <SheetHeader>
           <SheetTitle>
             <Image
@@ -79,15 +70,10 @@ export function Sidebar() {
           <SheetDescription></SheetDescription>
         </SheetHeader>
 
-        <ScrollArea className="h-[80%] mt-2 rounded-md  list-none tracking-wide">
-          <div className="p-4">
+        <ScrollArea className="h-[80%] mt-2 rounded-md list-none tracking-wide">
+          <div className="p-4 ">
             <Link href="/">
-              <h3
-                className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2"
-                onClick={() => {
-                  setSidebarOpen(false);
-                }}
-              >
+              <h3 className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2">
                 <Image
                   src={HomeIcon}
                   height={20}
@@ -100,12 +86,7 @@ export function Sidebar() {
             </Link>
             {/* tasks section */}
             <Link href="/tasks">
-              <h3
-                className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2"
-                onClick={() => {
-                  setSidebarOpen(false);
-                }}
-              >
+              <h3 className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2">
                 <Image
                   src={TasksIcon}
                   height={20}
@@ -118,12 +99,7 @@ export function Sidebar() {
             </Link>
             {/* customer section */}
             <Link href="/customers">
-              <h3
-                className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2"
-                onClick={() => {
-                  setSidebarOpen(false);
-                }}
-              >
+              <h3 className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2">
                 <Image
                   src={CustomerIcon}
                   height={20}
@@ -136,12 +112,7 @@ export function Sidebar() {
             </Link>
             {/* leads section */}
             <Link href="/leads">
-              <h3
-                className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2"
-                onClick={() => {
-                  setSidebarOpen(false);
-                }}
-              >
+              <h3 className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2">
                 <Image
                   src={LeadsIcon}
                   height={20}
@@ -161,7 +132,12 @@ export function Sidebar() {
               <div className="flex items-center justify-between space-x-4 ">
                 <CollapsibleTrigger asChild className="w-80">
                   <h3
-                    className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2 items-center"
+                    className={`dark:hover:bg-slate-800 ${
+                      salesSectionOpen ? "dark:bg-zinc-800" : null
+                    } 
+                    ${
+                      salesSectionOpen ? "bg-zinc-300" : null
+                    } hover:bg-slate-200 rounded-md p-2 w-full flex gap-2 items-center`}
                     onClick={() => setSalesSectionOpen(!salesSectionOpen)}
                   >
                     <Image
@@ -182,8 +158,8 @@ export function Sidebar() {
                 </CollapsibleTrigger>
               </div>
               <CollapsibleContent className="rounded-md  px-4 py-2 ">
-                <Link href="/sales/proposols">
-                  <ListItem title="Proposols"></ListItem>
+                <Link href="/sales/proposals">
+                  <ListItem title="Proposals"></ListItem>
                 </Link>
 
                 <Link href="/sales/estimates">
@@ -210,12 +186,7 @@ export function Sidebar() {
 
             {user?.admin ? (
               <Link href="/edituser">
-                <h3
-                  className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2"
-                  onClick={() => {
-                    setSidebarOpen(false);
-                  }}
-                >
+                <h3 className="dark:hover:bg-slate-800 hover:bg-slate-200 rounded-md p-2 w-full flex gap-2">
                   <Image
                     src={EditUserIcon}
                     height={20}

@@ -131,7 +131,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
       <DialogContent className="sm:max-w-[425px] ">
         <DialogHeader>
           <div className="">
-            <DialogTitle>Add Group</DialogTitle>
+            <DialogTitle>Search Group</DialogTitle>
             <Button
               variant="outline"
               className="absolute text-sm p-4 rounded-full scale-75 top-2 right-2"
@@ -140,7 +140,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
               X
             </Button>
           </div>
-          <DialogDescription>Add a Group for use in items.</DialogDescription>
+          <DialogDescription>Search existing groups</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -181,6 +181,13 @@ const DailogBox = ({ open, setOpen }: Props) => {
             </Popover>
           </div>
           <hr />
+
+          <DialogHeader>
+            <div className="">
+              <DialogTitle>Add Group</DialogTitle>
+            </div>
+            <DialogDescription>Add a Group for use in items.</DialogDescription>
+          </DialogHeader>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Name
