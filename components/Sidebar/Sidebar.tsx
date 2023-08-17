@@ -56,7 +56,7 @@ export function Sidebar() {
         </p>
       </SheetTrigger>
 
-      <SheetContent>
+      <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>
             <Image

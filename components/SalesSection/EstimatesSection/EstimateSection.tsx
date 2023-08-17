@@ -45,17 +45,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Proposal } from "./data";
+import { Estimate } from "./data";
 import { useEffect } from "react";
 import userContext from "@/context/userContext";
 import { useContext } from "react";
 import {
-  getProposals,
-  updateProposal,
-} from "@/utils/apiRequests/sales functions/proposalFunctions";
+  getEstimates,
+  updateEstimate,
+} from "@/utils/apiRequests/sales functions/EstimateFunctions";
 import { Separator } from "@/components/ui/separator";
-import DailogBox from "@/components/SalesSection/ProposalsSection/AddProposalDailog/Dailog";
-import { set } from "date-fns";
+import DailogBox from "@/components/SalesSection/EstimatesSection/AddEstimateDailog/Dailog";
 
 const dateParser = (date: string) => {
   const dateObj = new Date(date);
@@ -66,31 +65,37 @@ const timeParser = (date: string) => {
   return dateObj.toLocaleTimeString();
 };
 
+function padNumber(num: number | string) {
+  let str = num.toString();
+  let paddedStr = str.padStart(5, "0");
+  return paddedStr;
+}
+
 type Props = {};
-const ProposalSection = (props: Props) => {
+const EstimateSection = (props: Props) => {
   const { toast } = useToast();
-  const [section, setSection] = React.useState<string>("myProposal");
-  const [data, setData] = React.useState<Proposal[]>([]);
-  const [myProposals, setMyProposals] = React.useState<Proposal[]>([]);
-  const [assignedProposals, setAssignedProposals] = React.useState<Proposal[]>(
+  const [section, setSection] = React.useState<string>("myEstimate");
+  const [data, setData] = React.useState<Estimate[]>([]);
+  const [myEstimates, setMyEstimates] = React.useState<Estimate[]>([]);
+  const [assignedEstimates, setAssignedEstimates] = React.useState<Estimate[]>(
     [],
   );
-  const [proposalsTypes, setProposalTypes] = React.useState<any>({
+  const [estimatesTypes, setEstimateTypes] = React.useState<any>({
     Draft: 0,
     Sent: 0,
     Open: 0,
-    Revised: 0,
+    Expired: 0,
     Declined: 0,
     Accepted: 0,
   });
-  const [myProposalStats, setMyProposalStats] = React.useState<any>({});
-  const [assignedProposalStats, setAssignedProposalStats] = React.useState<any>(
+  const [myEstimateStats, setMyEstimateStats] = React.useState<any>({});
+  const [assignedEstimateStats, setAssignedEstimateStats] = React.useState<any>(
     {},
   );
   const { user } = useContext(userContext);
   const [refresh, setRefresh] = React.useState<boolean>(false);
 
-  const columns: ColumnDef<Proposal>[] = [
+  const columns: ColumnDef<Estimate>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -115,34 +120,40 @@ const ProposalSection = (props: Props) => {
       header: "No.",
       cell: ({ row }) => (
         <div className="capitalize ">
-          {data.findIndex((proposal) => proposal._id === row.getValue("_id")) +
+          {data.findIndex((estimate) => estimate._id === row.getValue("_id")) +
             1}
         </div>
       ),
     },
+
     {
-      accessorKey: "subject",
-      header: "Subject",
+      accessorKey: "estimateNumber",
+      header: "Estimate No.",
       cell: ({ row }) => (
-        <div className="capitalize ">{row.getValue("subject")}</div>
+        <div className="capitalize ">
+          {<p>EST-{padNumber(row.getValue("estimateNumber"))}</p>}
+        </div>
       ),
     },
-    {
-      accessorKey: "to",
-      header: "To",
-      cell: ({ row }) => (
-        <div className="capitalize ">{row.getValue("to")}</div>
-      ),
-    },
+
     {
       accessorKey: "subTotal",
-      header: "Total",
+      header: "Amount",
       cell: ({ row }) => (
         <div className="capitalize ">
           {parseFloat(row.getValue("subTotal")).toFixed(2)} USD
         </div>
       ),
     },
+
+    {
+      accessorKey: "reference",
+      header: "Reference",
+      cell: ({ row }) => (
+        <div className="capitalize ">{<p>{row.getValue("reference")}</p>}</div>
+      ),
+    },
+
     {
       accessorKey: "date",
       header: "Date",
@@ -158,17 +169,17 @@ const ProposalSection = (props: Props) => {
       ),
     },
     {
-      accessorKey: "openTill",
-      header: "Open Till",
+      accessorKey: "expiryDate",
+      header: "Expiry Date",
       cell: ({ row }) => (
         <>
           {/* @ts-ignore */}
           <div className="capitalize">
-            {dateParser(row.getValue("openTill"))}
+            {dateParser(row.getValue("expiryDate"))}
           </div>
           {/* @ts-ignore */}
           <p className="capitalize text-xs">
-            {timeParser(row.getValue("openTill"))}
+            {timeParser(row.getValue("expiryDate"))}
           </p>
         </>
       ),
@@ -183,20 +194,38 @@ const ProposalSection = (props: Props) => {
         </>
       ),
     },
+
     {
-      accessorKey: "createdAt",
-      header: "Date Created",
+      accessorKey: "adminNote",
+      header: "Admin Note",
       cell: ({ row }) => (
-        <>
-          {/* @ts-ignore */}
-          <div className="capitalize">
-            {dateParser(row.getValue("createdAt"))}
-          </div>
-          {/* @ts-ignore */}
-          <p className="capitalize text-xs">
-            {timeParser(row.getValue("createdAt"))}
-          </p>
-        </>
+        <div className="capitalize ">{<p>{row.getValue("adminNote")}</p>}</div>
+      ),
+    },
+
+    {
+      accessorKey: "clientNote",
+      header: "Client Note",
+      cell: ({ row }) => (
+        <div className="capitalize ">{<p>{row.getValue("clientNote")}</p>}</div>
+      ),
+    },
+
+    {
+      accessorKey: "terms",
+      header: "T&C",
+      cell: ({ row }) => (
+        <div className="capitalize ">{<p>{row.getValue("terms")}</p>}</div>
+      ),
+    },
+    {
+      accessorKey: "saleAgent",
+      header: "Agent",
+      cell: ({ row }) => (
+        // @ts-ignore
+        <div className="capitalize ">
+          {<p>{row.getValue("saleAgent").name}</p>}
+        </div>
       ),
     },
     {
@@ -209,10 +238,8 @@ const ProposalSection = (props: Props) => {
               ? "bg-orange-500"
               : row.getValue("status") == "Sent"
               ? "bg-sky-500"
-              : row.getValue("status") == "Open"
+              : row.getValue("status") == "Expired"
               ? "bg-black text-white dark:bg-white dark:text-black"
-              : row.getValue("status") == "Revised"
-              ? "bg-yellow-500"
               : row.getValue("status") == "Declined"
               ? "bg-red-500"
               : row.getValue("status") == "Accepted"
@@ -249,8 +276,7 @@ const ProposalSection = (props: Props) => {
               <SelectGroup>
                 <SelectItem value="Draft">Draft</SelectItem>
                 <SelectItem value="Sent">Sent</SelectItem>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="Revised">Revised</SelectItem>
+                <SelectItem value="Expired">Expired</SelectItem>
                 <SelectItem value="Declined">Declined</SelectItem>
                 <SelectItem value="Accepted">Accepted</SelectItem>
               </SelectGroup>
@@ -271,7 +297,7 @@ const ProposalSection = (props: Props) => {
             onClick={() => {
               try {
                 if (user?.token)
-                  updateProposal(user?.token, {
+                  updateEstimate(user?.token, {
                     _id: row.getValue("_id"),
                     status: row.getValue("status"),
                   })
@@ -304,64 +330,64 @@ const ProposalSection = (props: Props) => {
     },
   ];
 
-  // fetching proposals data
+  // fetching estimates data
   useEffect(() => {
     if (user)
-      getProposals(user?.token)
+      getEstimates(user?.token)
         .then((res) => {
-          if (section === "myProposal") {
-            setMyProposals(res.data.Proposals);
-            setData(res.data.Proposals);
+          if (section === "myEstimate") {
+            setMyEstimates(res.data.Estimates);
+            setData(res.data.Estimates);
           }
           if (section === "assigned") {
-            setAssignedProposals(res.data.assignedProposals);
-            setData(res.data.assignedProposals);
+            setAssignedEstimates(res.data.assignedEstimates);
+            setData(res.data.assignedEstimates);
           }
 
-          setAssignedProposals(res.data.assignedProposals);
+          setAssignedEstimates(res.data.assignedEstimates);
           let Draft = 0,
             Sent = 0,
             Open = 0,
-            Revised = 0,
+            Expired = 0,
             Declined = 0,
             Accepted = 0;
-          res.data.Proposals.forEach((proposal: any) => {
-            if (proposal.status == "Draft") Draft++;
-            else if (proposal.status == "Sent") Sent++;
-            else if (proposal.status == "Open") Open++;
-            else if (proposal.status == "Revised") Revised++;
-            else if (proposal.status == "Declined") Declined++;
-            else if (proposal.status == "Accepted") Accepted++;
+          res.data.Estimates.forEach((estimate: any) => {
+            if (estimate.status == "Draft") Draft++;
+            else if (estimate.status == "Sent") Sent++;
+            else if (estimate.status == "Open") Open++;
+            else if (estimate.status == "Expired") Expired++;
+            else if (estimate.status == "Declined") Declined++;
+            else if (estimate.status == "Accepted") Accepted++;
           });
-          setMyProposalStats({
+          setMyEstimateStats({
             Draft,
             Sent,
             Open,
-            Revised,
+            Expired,
             Declined,
             Accepted,
           });
 
-          // re calculating for assigned proposals
+          // re calculating for assigned estimates
           (Draft = 0),
             (Sent = 0),
             (Open = 0),
-            (Revised = 0),
+            (Expired = 0),
             (Declined = 0),
             (Accepted = 0);
-          res.data.assignedProposals.forEach((proposal: any) => {
-            if (proposal.status == "Draft") Draft++;
-            else if (proposal.status == "Sent") Sent++;
-            else if (proposal.status == "Open") Open++;
-            else if (proposal.status == "Revised") Revised++;
-            else if (proposal.status == "Declined") Declined++;
-            else if (proposal.status == "Accepted") Accepted++;
+          res.data.assignedEstimates.forEach((estimate: any) => {
+            if (estimate.status == "Draft") Draft++;
+            else if (estimate.status == "Sent") Sent++;
+            else if (estimate.status == "Open") Open++;
+            else if (estimate.status == "Expired") Expired++;
+            else if (estimate.status == "Declined") Declined++;
+            else if (estimate.status == "Accepted") Accepted++;
           });
-          setAssignedProposalStats({
+          setAssignedEstimateStats({
             Draft,
             Sent,
             Open,
-            Revised,
+            Expired,
             Declined,
             Accepted,
           });
@@ -409,22 +435,22 @@ const ProposalSection = (props: Props) => {
       defaultValue={section}
       onValueChange={(value) => {
         setSection(value);
-        if (value === "myProposal") setData(myProposals);
-        else setData(assignedProposals);
+        if (value === "myEstimate") setData(myEstimates);
+        else setData(assignedEstimates);
       }}
     >
       <div className="flex justify-center items-center flex-col ">
         <DailogBox open={openValue} setOpen={setOpenValue} />
-        {/* proposal summary section */}
+        {/* estimate summary section */}
         <div className="pt-20  w-[90%] ">
           <div className="space-y-1 flex justify-between">
             <h2 className="leading-none text-4xl font-semibold tracking-widest flex items-end">
-              Proposals Summary
+              Estimates Summary
             </h2>
             <div>
               <TabsList className="self-end mr-2">
-                <TabsTrigger value="myProposal">Proposals</TabsTrigger>
-                <TabsTrigger value="assigned">Assigned Proposals</TabsTrigger>
+                <TabsTrigger value="myEstimate">Estimates</TabsTrigger>
+                <TabsTrigger value="assigned">Assigned Estimates</TabsTrigger>
               </TabsList>
               <Button
                 variant="default"
@@ -432,7 +458,7 @@ const ProposalSection = (props: Props) => {
                   setOpenValue(!openValue);
                 }}
               >
-                Add proposal
+                Add estimate
               </Button>
             </div>
           </div>
@@ -442,68 +468,63 @@ const ProposalSection = (props: Props) => {
               Accepted
             </h3>
             <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Accepted
-                : assignedProposalStats.Accepted}
-            </h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-yellow-500 font-bold text-xl">
-              Revised
-            </h3>
-            <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Revised
-                : assignedProposalStats.Revised}
+              {section === "myEstimate"
+                ? myEstimateStats.Accepted
+                : assignedEstimateStats.Accepted}
             </h4>
             <Separator orientation="vertical" />
             <h3 className="tracking-widest text-black dark:text-white font-bold text-xl">
-              Open
+              Expired
             </h3>
             <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Open
-                : assignedProposalStats.Open}
+              {section === "myEstimate"
+                ? myEstimateStats.Expired
+                : assignedEstimateStats.Expired}
             </h4>
             <Separator orientation="vertical" />
             <h3 className="tracking-widest text-sky-500 font-bold text-xl">
               Sent
             </h3>
             <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Sent
-                : assignedProposalStats.Sent}
+              {section === "myEstimate"
+                ? myEstimateStats.Sent
+                : assignedEstimateStats.Sent}
             </h4>
             <Separator orientation="vertical" />
             <h3 className="tracking-widest text-orange-500 font-bold text-xl">
               Draft
             </h3>
             <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Draft
-                : assignedProposalStats.Draft}
+              {section === "myEstimate"
+                ? myEstimateStats.Draft
+                : assignedEstimateStats.Draft}
             </h4>
             <Separator orientation="vertical" />
             <h3 className="tracking-widest text-red-500 font-bold text-xl">
               Declined
             </h3>
             <h4 className="font-[800] text-lg">
-              {section === "myProposal"
-                ? myProposalStats.Declined
-                : assignedProposalStats.Declined}
+              {section === "myEstimate"
+                ? myEstimateStats.Declined
+                : assignedEstimateStats.Declined}
             </h4>
           </div>
         </div>
-        {/* proposal summary section end*/}
+        {/* estimate summary section end*/}
 
         <div className="w-[90%]">
           <div className="flex items-center py-4 ">
             <Input
-              placeholder="Search proposal ..."
+              placeholder="Search estimate ..."
               value={
-                (table.getColumn("subject")?.getFilterValue() as string) ?? ""
+                (table
+                  .getColumn("estimateNumber")
+                  ?.getFilterValue() as string) ?? ""
               }
               onChange={(event) =>
-                table.getColumn("subject")?.setFilterValue(event.target.value)
+                table
+                  .getColumn("estimateNumber")
+                  ?.setFilterValue(event.target.value)
               }
               className="max-w-sm"
             />
@@ -553,7 +574,7 @@ const ProposalSection = (props: Props) => {
               </DropdownMenu>
             </div>
           </div>
-          {/* my proposals */}
+          {/* my estimates */}
           <TabsContent value={section}>
             <div className="rounded-md border">
               <Table className="dark:bg-[#111112c5]">
@@ -637,4 +658,4 @@ const ProposalSection = (props: Props) => {
   );
 };
 
-export default ProposalSection;
+export default EstimateSection;

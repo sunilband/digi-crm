@@ -35,13 +35,13 @@ import { UserInterface } from "@/context/userContext";
 import userContext from "@/context/userContext";
 import { useContext } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { createProposal } from "@/utils/apiRequests/sales functions/proposalFunctions";
+import { createEstimate } from "@/utils/apiRequests/sales functions/EstimateFunctions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getCustomers } from "@/utils/apiRequests/customerFunctions";
 import { getLeads } from "@/utils/apiRequests/LeadsFunction";
 import { getItems } from "@/utils/apiRequests/sales functions/ItemFunctions";
-
+import { Switch } from "@/components/ui/switch";
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,58 +49,98 @@ type Props = {
 
 const DailogBox = ({ open, setOpen }: Props) => {
   const initialValues = {
-    subject: "",
-    related: "Customer",
     customerID: "",
-    leadID: "",
     date: "",
-    openTill: "",
+    expiryDate: "",
     currency: "",
     discountType: "No Discount",
     tags: "N/A",
     status: "",
-    assignedTo: "",
-    to: "",
-    street: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-    email: "",
-    phone: "",
+    saleAgent: "",
+    streetBill: "",
+    cityBill: "",
+    stateBill: "",
+    zipBill: "",
+    countryBill: "",
+    streetShip: "",
+    cityShip: "",
+    stateShip: "",
+    zipShip: "",
+    countryShip: "",
+    estimateNumber: "",
+    reference: "",
+    adminNote: "",
+    clientNote: "",
+    terms: "",
     totalDiscountType: "",
     value: "0",
     adjustment: "0",
   };
 
+  const [sameAddress, setSameAddress] = useState(true);
+
   const formik = useFormik({
     initialValues,
-    validationSchema: Yup.object({
-      subject: Yup.string().required("Subject Required"),
-      related: Yup.string().required("Related Required"),
-      customerID: Yup.string().required("Customer ID Required"),
-      leadID: Yup.string().required("Lead ID Required"),
-      date: Yup.string().required("Date Required"),
-      openTill: Yup.string().required("Open Till Required"),
-      currency: Yup.string().required("currency Required"),
-      discountType: Yup.string().required("Discount Type Required"),
-      tags: Yup.string().required("Tags Required"),
-      status: Yup.string().required("Status Required"),
-      assignedTo: Yup.string().required("Assigned to Required"),
-      to: Yup.string().required("To Required"),
-      street: Yup.string().required("Street Required"),
-      city: Yup.string().required("City Required"),
-      state: Yup.string().required("State Required"),
-      zip: Yup.string().required("Zip Required"),
-      country: Yup.string().required("Country Required"),
-      email: Yup.string()
-        .email("Enter valid email")
-        .required("Email is required"),
-      phone: Yup.string().required("Phone Required"),
-      totalDiscountType: Yup.string().required("total discount type Required"),
-      value: Yup.string().required("Value Required"),
-      adjustment: Yup.string().required("adjustment Required"),
-    }),
+    validationSchema: Yup.object(
+      !sameAddress
+        ? {
+            customerID: Yup.string().required("Customer ID Required"),
+            date: Yup.string().required("Date Required"),
+            expiryDate: Yup.string().required("Open Till Required"),
+            currency: Yup.string().required("currency Required"),
+            discountType: Yup.string().required("Discount Type Required"),
+            tags: Yup.string().required("Tags Required"),
+            status: Yup.string().required("Status Required"),
+            saleAgent: Yup.string().required("Assigned to Required"),
+            streetBill: Yup.string().required("Street Required"),
+            cityBill: Yup.string().required("City Required"),
+            stateBill: Yup.string().required("State Required"),
+            zipBill: Yup.string().required("Zip Required"),
+            countryBill: Yup.string().required("Country Required"),
+            streetShip: Yup.string().required(
+              "Shipping Street address Required",
+            ),
+            cityShip: Yup.string().required("Shipping City Required"),
+            stateShip: Yup.string().required("Shipping State Required"),
+            zipShip: Yup.string().required("Shipping Zip Required"),
+            countryShip: Yup.string().required("Shipping Country Required"),
+            estimateNumber: Yup.string().required("Estimate Number Required"),
+            reference: Yup.string().required("Reference Required"),
+            adminNote: Yup.string().required("Admin Note Required"),
+            clientNote: Yup.string().required("Client Note Required"),
+            terms: Yup.string().required("Terms Required"),
+            totalDiscountType: Yup.string().required(
+              "total discount type Required",
+            ),
+            value: Yup.string().required("Value Required"),
+            adjustment: Yup.string().required("adjustment Required"),
+          }
+        : {
+            customerID: Yup.string().required("Customer ID Required"),
+            date: Yup.string().required("Date Required"),
+            expiryDate: Yup.string().required("Open Till Required"),
+            currency: Yup.string().required("currency Required"),
+            discountType: Yup.string().required("Discount Type Required"),
+            tags: Yup.string().required("Tags Required"),
+            status: Yup.string().required("Status Required"),
+            saleAgent: Yup.string().required("Assigned to Required"),
+            streetBill: Yup.string().required("Street Required"),
+            cityBill: Yup.string().required("City Required"),
+            stateBill: Yup.string().required("State Required"),
+            zipBill: Yup.number().required("Zip Required"),
+            countryBill: Yup.string().required("Billing Country Required"),
+            estimateNumber: Yup.string().required("Estimate Number Required"),
+            reference: Yup.string().required("Reference Required"),
+            adminNote: Yup.string().required("Admin Note Required"),
+            clientNote: Yup.string().required("Client Note Required"),
+            terms: Yup.string().required("Terms Required"),
+            totalDiscountType: Yup.string().required(
+              "total discount type Required",
+            ),
+            value: Yup.string().required("Value Required"),
+            adjustment: Yup.string().required("adjustment Required"),
+          },
+    ),
     onSubmit: (values) => {},
   });
   const [allUsers, setAllUsers] = useState<UserInterface[]>([]);
@@ -115,17 +155,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const [subTotal, setSubTotal] = useState(0);
 
-  const [proposal, setProposal] = useState<any>({
-    proposalName: "",
-    proposalDesc: "",
-    status: "",
-    assignedTo: "",
-    dueDate: date,
-    priority: "",
-    tags: "",
-  });
-
-  // console.log(formik.values);
+  console.log(formik.values);
   // console.log("selected items",selectedItems);
 
   // calculate subtotal
@@ -222,14 +252,14 @@ const DailogBox = ({ open, setOpen }: Props) => {
 
   // setting open till date
   useEffect(() => {
-    formik.setFieldValue("openTill", OpenTilldate);
+    formik.setFieldValue("expiryDate", OpenTilldate);
   }, [OpenTilldate]);
 
   //calling create api
-  const addProposal = () => {
+  const addEstimate = () => {
     const formikErrors = Object.values(formik.errors);
 
-    if (formikErrors.length > 1) {
+    if (formikErrors.length > 0) {
       return toast({
         title: "Fill the form correctly",
         description: formikErrors.join(" , "),
@@ -237,95 +267,65 @@ const DailogBox = ({ open, setOpen }: Props) => {
     }
 
     if (user?.token) {
-      formik.values.related == "Customer"
-        ? createProposal(user?.token, {
-            subject: formik.values.subject,
-            related: formik.values.related,
-            customerID: formik.values.customerID,
-            date: formik.values.date,
-            openTill: formik.values.openTill,
-            currency: formik.values.currency,
-            tags:
-              formik.values.tags !== ""
-                ? [...formik.values.tags.split(",")]
-                : ["N/A"],
-            status: formik.values.status,
-            assignedTo: formik.values.assignedTo,
-            to: formik.values.to,
-            street: formik.values.street,
-            city: formik.values.city,
-            state: formik.values.state,
-            zip: formik.values.zip,
-            country: formik.values.country,
-            email: formik.values.email,
-            phone: formik.values.phone,
-            discountType: formik.values.discountType,
-            totalDiscountType: formik.values.totalDiscountType,
-            value: formik.values.value,
-            adjustment: formik.values.adjustment,
-            items: selectedItems,
-          }).then((res) => {
-            if (res.success) {
-              console.log(res);
-              // clear form values
-              formik.resetForm();
-              setOpen(false);
-              toast({
-                title: "Success",
-                description: "Proposal created successfully",
-              });
-            }
-            if (res.error) {
-              toast({
-                title: "Error occured",
-                description: res.error,
-              });
-            }
-          })
-        : createProposal(user?.token, {
-            subject: formik.values.subject,
-            related: formik.values.related,
-            leadID: formik.values.leadID,
-            date: formik.values.date,
-            openTill: formik.values.openTill,
-            currency: formik.values.currency,
-            tags:
-              formik.values.tags !== ""
-                ? [...formik.values.tags.split(",")]
-                : ["N/A"],
-            status: formik.values.status,
-            assignedTo: formik.values.assignedTo,
-            to: formik.values.to,
-            street: formik.values.street,
-            city: formik.values.city,
-            state: formik.values.state,
-            zip: formik.values.zip,
-            country: formik.values.country,
-            email: formik.values.email,
-            phone: formik.values.phone,
-            discountType: formik.values.discountType,
-            totalDiscountType: formik.values.totalDiscountType,
-            value: formik.values.value,
-            adjustment: formik.values.adjustment,
-            items: selectedItems,
-          }).then((res) => {
-            if (res.success) {
-              console.log(res);
-              // clear form values
-              formik.resetForm();
-              setOpen(false);
-              toast({
-                title: "Success",
-                description: "Proposal created successfully",
-              });
-            }
-            if (res.error) {
-              toast({
-                title: "Error occured",
-                description: res.error,
-              });
-            }
+      createEstimate(user?.token, {
+        customerID: formik.values.customerID,
+        date: formik.values.date,
+        expiryDate: formik.values.expiryDate,
+        currency: formik.values.currency,
+        tags:
+          formik.values.tags !== ""
+            ? [...formik.values.tags.split(",")]
+            : ["N/A"],
+        billingAddress: {
+          street: formik.values.streetBill,
+          city: formik.values.cityBill,
+          state: formik.values.stateBill,
+          zip: formik.values.zipBill,
+          country: formik.values.countryBill,
+        },
+        shippingAddress: {
+          street: sameAddress
+            ? formik.values.streetBill
+            : formik.values.streetShip,
+          city: sameAddress ? formik.values.cityBill : formik.values.cityShip,
+          state: sameAddress
+            ? formik.values.stateBill
+            : formik.values.stateShip,
+          zip: sameAddress ? formik.values.zipBill : formik.values.zipShip,
+          country: sameAddress
+            ? formik.values.countryBill
+            : formik.values.countryShip,
+        },
+        status: formik.values.status,
+        saleAgent: formik.values.saleAgent,
+        estimateNumber: formik.values.estimateNumber,
+        reference: formik.values.reference,
+        adminNote: formik.values.adminNote,
+        clientNote: formik.values.clientNote,
+        terms: formik.values.terms,
+        discountType: formik.values.discountType,
+        totalDiscountType: formik.values.totalDiscountType,
+        value: formik.values.value,
+        adjustment: formik.values.adjustment,
+        items: selectedItems,
+      }).then((res) => {
+        if (res.success) {
+          console.log(res);
+          // clear form values
+          formik.resetForm();
+          setOpen(false);
+          toast({
+            title: "Success",
+            description: "Estimate created successfully",
           });
+        }
+        if (res.error) {
+          toast({
+            title: "Error occured",
+            description: res.error,
+          });
+        }
+      });
     }
   };
 
@@ -352,7 +352,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
       <DialogContent className="sm:max-w-[80vw] max-h-[90vh] ">
         <DialogHeader>
           <div className="">
-            <DialogTitle>Add proposal</DialogTitle>
+            <DialogTitle>Add estimate</DialogTitle>
             <Button
               variant="outline"
               className="absolute text-sm p-4 rounded-full scale-75 top-2 right-2"
@@ -362,31 +362,37 @@ const DailogBox = ({ open, setOpen }: Props) => {
             </Button>
           </div>
           <DialogDescription>
-            Add proposals to users with equal or less authorization.
+            Add estimates to users with equal or less authorization.
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-around">
-          <div className="grid gap-4 py-4 w-[40%] h-[50%] pr-3 overflow-y-scroll">
+          <div
+            className={`grid gap-4 py-4 w-[40%] ${
+              sameAddress ? "h-[44%]" : "h-[33%]"
+            }  pr-3 overflow-y-scroll`}
+          >
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="subject" className="text-right">
-                Subject
+              <Label htmlFor="estimateNumber" className="text-right">
+                Estimate Number
               </Label>
               <Input
-                id="subject"
+                id="estimateNumber"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.subject}
+                value={formik.values.estimateNumber}
               />
             </div>
-            {/* Related status */}
+
+            {/* select customer */}
+
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Related
+                Select Customer
               </Label>
               <Select
                 onValueChange={(value) =>
-                  formik.setFieldValue("related", value)
+                  formik.setFieldValue("customerID", value)
                 }
               >
                 <SelectTrigger className="col-span-3">
@@ -394,69 +400,17 @@ const DailogBox = ({ open, setOpen }: Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Customer">Customer</SelectItem>
-                    <SelectItem value="Lead">Lead</SelectItem>
+                    {customers.map((item, key) => {
+                      return (
+                        <SelectItem value={item._id} key={key}>
+                          {item.company}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
-
-            {/* select customer */}
-            {formik.values.related === "Customer" && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Select Customer
-                </Label>
-                <Select
-                  onValueChange={(value) =>
-                    formik.setFieldValue("customerID", value)
-                  }
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {customers.map((item, key) => {
-                        return (
-                          <SelectItem value={item._id} key={key}>
-                            {item.company}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-            {/* select lead */}
-            {formik.values.related === "Lead" && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Select Lead
-                </Label>
-                <Select
-                  onValueChange={(value) =>
-                    formik.setFieldValue("leadID", value)
-                  }
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {leads.map((item, key) => {
-                        return (
-                          <SelectItem value={item._id} key={key}>
-                            {item.company}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             {/* date */}
             <div className="grid grid-cols-4 items-center gap-4">
@@ -490,7 +444,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
             {/* open till date */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Open Till
+                Expiry date
               </Label>
               <Popover>
                 <PopoverTrigger asChild>
@@ -579,6 +533,20 @@ const DailogBox = ({ open, setOpen }: Props) => {
               />
             </div>
 
+            {/* Reference */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="reference" className="text-right">
+                Reference #
+              </Label>
+              <Input
+                id="reference"
+                className="col-span-3"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.reference}
+              />
+            </div>
+
             {/* status */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
@@ -594,8 +562,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
                   <SelectGroup>
                     <SelectItem value="Draft">Draft</SelectItem>
                     <SelectItem value="Sent">Sent</SelectItem>
-                    <SelectItem value="Open">Open</SelectItem>
-                    <SelectItem value="Revised">Revised</SelectItem>
+                    <SelectItem value="Expired">Expired</SelectItem>
                     <SelectItem value="Declined">Declined</SelectItem>
                     <SelectItem value="Accepted">Accepted</SelectItem>
                   </SelectGroup>
@@ -606,11 +573,11 @@ const DailogBox = ({ open, setOpen }: Props) => {
             {/* select user */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Assigned to
+                Sale agent
               </Label>
               <Select
                 onValueChange={(value) =>
-                  formik.setFieldValue("assignedTo", value)
+                  formik.setFieldValue("saleAgent", value)
                 }
               >
                 <SelectTrigger className="col-span-3">
@@ -630,114 +597,214 @@ const DailogBox = ({ open, setOpen }: Props) => {
               </Select>
             </div>
 
-            {/* to */}
+            {/*----------------- billing address ------------------*/}
+            <div className="mt-1 border" />
+            <p className="text-center">Billing Address</p>
+            <div className="mb-1 border" />
+
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="to" className="text-right">
-                To
-              </Label>
-              <Input
-                id="to"
-                className="col-span-3"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.to}
-              />
+              <p className="text-right col-span-3">
+                Billing address same as shipping address
+              </p>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="airplane-mode"
+                  checked={sameAddress}
+                  onCheckedChange={() => setSameAddress(!sameAddress)}
+                />
+              </div>
             </div>
-            {/*  street*/}
+
+            {/* street*/}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="street" className="text-right">
+              <Label htmlFor="streetBill" className="text-right">
                 Street
               </Label>
               <Input
-                id="street"
+                id="streetBill"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.street}
+                value={formik.values.streetBill}
               />
             </div>
 
             {/* city */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="city" className="text-right">
+              <Label htmlFor="cityBill" className="text-right">
                 City
               </Label>
               <Input
-                id="city"
+                id="cityBill"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.city}
+                value={formik.values.cityBill}
               />
             </div>
 
             {/* state */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="state" className="text-right">
+              <Label htmlFor="stateBill" className="text-right">
                 State
               </Label>
               <Input
-                id="state"
+                id="stateBill"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.state}
+                value={formik.values.stateBill}
               />
             </div>
 
             {/* zip */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="zip" className="text-right">
+              <Label htmlFor="zipBill" className="text-right">
                 Zip
               </Label>
               <Input
-                id="zip"
+                id="zipBill"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.zip}
+                value={formik.values.zipBill}
               />
             </div>
 
             {/* country */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="country" className="text-right">
+              <Label htmlFor="countryBill" className="text-right">
                 Country
               </Label>
               <Input
-                id="country"
+                id="countryBill"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.country}
+                value={formik.values.countryBill}
               />
             </div>
 
-            {/* email */}
+            {/*----------------- shipping address ------------------*/}
+            {!sameAddress && (
+              <>
+                <div className="mt-1 border" />
+                <p className="text-center">Shipping Address</p>
+                <div className="mb-1 border" />
+
+                {/* street*/}
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="streetShip" className="text-right">
+                    Street
+                  </Label>
+                  <Input
+                    id="streetShip"
+                    className="col-span-3"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.streetShip}
+                  />
+                </div>
+
+                {/* city */}
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="cityShip" className="text-right">
+                    City
+                  </Label>
+                  <Input
+                    id="cityShip"
+                    className="col-span-3"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.cityShip}
+                  />
+                </div>
+
+                {/* state */}
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="stateShip" className="text-right">
+                    State
+                  </Label>
+                  <Input
+                    id="stateShip"
+                    className="col-span-3"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.stateShip}
+                  />
+                </div>
+
+                {/* zip */}
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="zipShip" className="text-right">
+                    Zip
+                  </Label>
+                  <Input
+                    id="zipShip"
+                    className="col-span-3"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.zipShip}
+                  />
+                </div>
+
+                {/* country */}
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="countryShip" className="text-right">
+                    Country
+                  </Label>
+                  <Input
+                    id="countryShip"
+                    className="col-span-3"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.countryShip}
+                  />
+                </div>
+              </>
+            )}
+            {/* GAP */}
+            <div className="mt-1 border" />
+
+            {/* Admin note */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
+              <Label htmlFor="adminNote" className="text-right">
+                Admin Note
               </Label>
               <Input
-                id="email"
+                id="adminNote"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.email}
+                value={formik.values.adminNote}
               />
             </div>
 
-            {/* phone */}
+            {/* Client note */}
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
+              <Label htmlFor="clientNote" className="text-right">
+                Client Note
               </Label>
               <Input
-                id="phone"
+                id="clientNote"
                 className="col-span-3"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                value={formik.values.phone}
+                value={formik.values.clientNote}
+              />
+            </div>
+
+            {/* terms */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="terms" className="text-right">
+                Terms and Conditions
+              </Label>
+              <Input
+                id="terms"
+                className="col-span-3"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.terms}
               />
             </div>
           </div>
@@ -961,7 +1028,7 @@ const DailogBox = ({ open, setOpen }: Props) => {
                     value={formik.values.adjustment}
                   />
                 </div>
-                <Button type="submit" onClick={addProposal}>
+                <Button type="submit" onClick={addEstimate}>
                   Save
                 </Button>
               </div>
