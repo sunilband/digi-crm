@@ -224,6 +224,7 @@ const EstimateSection = (props: Props) => {
       cell: ({ row }) => (
         // @ts-ignore
         <div className="capitalize ">
+          {/* @ts-ignore */}
           {<p>{row.getValue("saleAgent").name}</p>}
         </div>
       ),

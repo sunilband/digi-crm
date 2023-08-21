@@ -9,8 +9,8 @@ export const getAllUsers = async (token: string) => {
       headers: myHeaders,
       redirect: "follow",
     };
-    // @ts-ignore
     const response = await fetch(
+      // @ts-ignore
       process.env.NEXT_PUBLIC_ALL_USERS,
       requestOptions,
     );
@@ -32,8 +32,8 @@ export const getManagers = async (token: string) => {
       headers: myHeaders,
       redirect: "follow",
     };
-    // @ts-ignore
     const response = await fetch(
+      // @ts-ignore
       process.env.NEXT_PUBLIC_GET_MANAGERS,
       requestOptions,
     );
