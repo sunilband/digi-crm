@@ -178,8 +178,7 @@ const TaskSection = (props: Props) => {
           <div className="capitalize">
             {
               // @ts-ignore
-              row.getValue(section == "myLeads" ? "assignedBy" : "assignedTo")
-                ?.name
+              row.getValue(section == "myLeads" ? "assignedBy" : "assignedTo")?.name
             }
           </div>
         </>

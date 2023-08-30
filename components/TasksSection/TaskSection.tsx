@@ -130,11 +130,10 @@ const TaskSection = (props: Props) => {
       header: section == "myTask" ? "Assigned By" : "Assigned To",
       cell: ({ row }) => (
         <>
-          {/* @ts-ignore */}
           <div className="capitalize">
             {
-              row.getValue(section == "myTask" ? "assignedBy" : "assignedTo")
-                ?.name
+              // @ts-ignore
+              row.getValue(section == "myTask" ? "assignedBy" : "assignedTo")?.name
             }
           </div>
         </>
