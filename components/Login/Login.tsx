@@ -1,157 +1,104 @@
-'use client'
+"use client";
 
-import * as React from 'react'
-import { cn } from '@/lib/utils'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import {
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth'
-import { auth, provider } from '../../firebase/firebase'
-import spinner from '../../public/svgs/spinner.svg'
-import googleIcon from '@/public/svgs/google.svg'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useContext } from 'react'
-import userContext from '@/context/userContext'
-import { UserInterface } from '@/context/userContext'
-import { setCookie, parseCookies } from 'nookies'
-import { getCookie } from '../../utils/getCookie'
-import { useEffect } from 'react'
-import { useFormik } from 'formik'
-import * as Yup from 'yup'
-import { useToast } from '@/components/ui/use-toast'
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import spinner from "../../public/svgs/spinner.svg";
+import googleIcon from "@/public/svgs/google.svg";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import userContext from "@/context/userContext";
+import { setCookie, parseCookies } from "nookies";
+import { getCookie } from "../../utils/getCookie";
+import { useEffect } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useToast } from "@/components/ui/use-toast";
+import { getUser, userLogin } from "@/utils/apiRequests/authFunctions";
+import { COOKIE_KEYS } from "@/utils/cookieEnums";
 
-type Props = {}
+type Props = {};
 
 const Login = (props: Props) => {
   useEffect(() => {
     if (user) {
       // router.push('/')
     }
-  }, [])
+  }, []);
 
   const initialValues = {
-    email: '',
-    password: '',
-  }
-
+    email: "",
+    password: "",
+  };
   const formik = useFormik({
     initialValues,
     validationSchema: Yup.object({
-      email: Yup.string().email('Invalid Email').required('Email Required'),
+      email: Yup.string().email("Invalid Email").required("Email Required"),
       password: Yup.string()
-        .min(6, 'Password must be 6 char or more')
-        .required('Password Required'),
+        .min(6, "Password must be 6 char or more")
+        .required("Password Required"),
     }),
     onSubmit: (values) => {},
-  })
-  const { toast } = useToast()
+  });
+  const { toast } = useToast();
+  const router = useRouter();
+  const { user, setUser } = useContext(userContext);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  const router = useRouter()
-  const { user, setUser } = useContext(userContext)
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [email, setEmail] = React.useState<string>('')
-  const [password, setPassword] = React.useState<string>('')
   async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
+    event.preventDefault();
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
+      setIsLoading(false);
+    }, 3000);
+    // call api here
     try {
-      signInWithEmailAndPassword(
-        auth,
-        formik.values.email,
-        formik.values.password,
-      )
-        .then((data: any) => {
-          const googleToken = data?.user.accessToken
-          setUser({
-            ...user,
-            name: data.user.displayName,
-            email: data.user.email,
-            image: data.user.photoURL,
-          })
-          setCookie(
-            null,
-            'user',
-            JSON.stringify({
-              ...user,
-              name: data.user.displayName,
-              email: data.user.email,
-              image: data.user.photoURL,
-            }),
-            {
-              maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
-              path: '/', // Cookie available across all paths
-            },
-          )
-          router.push('/')
-        })
-        .catch((err) => {
-          if (err.code === 'auth/user-not-found') {
-            toast({
-              title: 'User not found',
-              description: 'Please signup first',
-            })
-          } else {
-            toast({
-              title: 'An error occured',
-            })
+      userLogin({
+        email: formik.values.email,
+        password: formik.values.password,
+      }).then((res) => {
+        if (res.success) {
+          setCookie(null, COOKIE_KEYS.ACCESS_TOKEN, res.token, {
+            maxAge: 30 * 24 * 60 * 60,
+            path: "/",
+          });
+          try {
+            let token = res.token;
+            getUser(token).then((res) => {
+              const data = res;
+              setUser({
+                ...data,
+                token: token,
+              });
+              toast({
+                title: "Login Success",
+                description: res.message,
+              });
+              router.push("/");
+            });
+          } catch (error) {
+            console.log("no user cookie found", error);
           }
-        })
+        } else
+          toast({
+            title: "Error occured",
+            description: res.error,
+          });
+      });
     } catch (error: any) {
+      console.log(error);
       toast({
-        title: 'An error occured',
-      })
-    }
-  }
-
-  const googleSignIn = () => {
-    setIsLoading(true)
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
-    try {
-      signInWithPopup(auth, provider)
-        .then((data: any) => {
-          const googleToken = data?.user.accessToken
-          setUser({
-            ...user,
-            name: data.user.displayName,
-            email: data.user.email,
-            image: data.user.photoURL,
-          })
-          setCookie(
-            null,
-            'user',
-            JSON.stringify({
-              ...user,
-              name: data.user.displayName,
-              email: data.user.email,
-              image: data.user.photoURL,
-            }),
-            {
-              maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
-              path: '/', // Cookie available across all paths
-            },
-          )
-          router.push('/')
-        })
-        .catch((err) => {
-          alert(err)
-        })
-    } catch (err: any) {
-      alert(err)
+        title: "Login Failed",
+        description: error,
+      });
     }
   }
 
   return (
-    <div className={cn('grid gap-6')} {...props}>
+    <div className={cn("grid gap-6")} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -207,15 +154,15 @@ const Login = (props: Props) => {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Dont have an account ?
           </span>
         </div>
       </div>
       <Button
         type="button"
+        variant="link"
         disabled={isLoading}
-        onClick={googleSignIn}
-        className="bg-slate-100 text-slate-900 hover:bg-slate-200 hover:text-slate-800 "
+        onClick={() => router.push("/signup")}
       >
         {isLoading ? (
           //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -226,19 +173,11 @@ const Login = (props: Props) => {
             height={100}
             className="mr-2 h-4 w-4 animate-spin"
           />
-        ) : (
-          <Image
-            src={googleIcon}
-            alt="google-icon"
-            width={100}
-            height={100}
-            className="mr-2 h-4 w-4 hover:scale-110 transition-all duration-300 ease-in-out"
-          />
-        )}{' '}
-        Google
+        ) : null}{" "}
+        Signup
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

@@ -11,12 +11,13 @@ import userContext from "../context/userContext";
 import { UserInterface } from "../context/userContext";
 
 import clsx from "clsx";
-import Dailog from "@/components/Dailog/Dailog";
+import Dailog from "@/components/TasksSection/Dailog/Dailog";
 import { setCookie, parseCookies } from "nookies";
 import { getCookie } from "@/utils/getCookie";
 import { COOKIE_KEYS } from "@/utils/cookieEnums";
 import { useRouter } from "next/navigation";
-import Favicon from "react-favicon";
+import { getUser } from "@/utils/apiRequests/authFunctions";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,30 +36,48 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
+  const page = usePathname();
   // set user context state
-  const [user, setUser] = useState<UserInterface | null>({
-    email: "",
-    image: "",
-    name: "",
-  });
+  const [user, setUser] = useState<UserInterface | null>(null);
+  // set token state
+  const [token, setToken] = useState<string | null>(null);
+  const redirect = ["/login"];
+
+  const tokenCkecker = (tokenData: string | null) => {
+    if (tokenData === null) {
+      return router.push("/login");
+    }
+
+    setToken(tokenData);
+    const originalPage = page;
+    try {
+      if (token !== null)
+        getUser(token).then((res) => {
+          if (!res) {
+            router.push("/login");
+          }
+          if (res !== undefined) {
+            const data = res;
+            setUser({
+              ...data,
+              token: token,
+            });
+            if (redirect.includes(originalPage) === true) {
+              router.push("/");
+            }
+          }
+        });
+    } catch (error) {
+      console.log("no user cookie found", error);
+    }
+  };
 
   useEffect(() => {
     // checking if user in cookies
     const cookies = parseCookies();
-    const data = cookies.user ? JSON.parse(cookies.user) : null;
-    if (data) {
-      setUser({
-        ...user,
-        name: data.name,
-        email: data.email,
-        image: data.image,
-      });
-    }
-    if (!data) {
-      router.push("/signup");
-    }
-  }, []);
+    const tokenData = cookies.accessToken ? cookies.accessToken : null;
+    if (page !== "/adminsignup") tokenCkecker(tokenData);
+  }, [token]);
 
   return (
     <html lang="en" suppressHydrationWarning>
