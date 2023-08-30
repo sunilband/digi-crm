@@ -303,7 +303,7 @@ const CreditNoteSection = (props: Props) => {
         <div className="pt-20  w-[90%] ">
           <div className="space-y-1 flex justify-between">
             <h2 className="leading-none text-4xl font-semibold tracking-widest flex items-end">
-              CreditNotes
+              Credit Notes
             </h2>
             <div>
               <Button

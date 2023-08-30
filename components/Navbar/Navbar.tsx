@@ -55,11 +55,14 @@ function Navbar() {
                       />
                     </div>
 
-                    <ListItem
+                    {/* <ListItem
                       href="/docs"
                       title="Profile"
                       className="text-center w-64"
-                    ></ListItem>
+                    ></ListItem> */}
+                    <p className="text-bold tracking-widest">
+                      {user?.name ? user?.name : user?.email}
+                    </p>
                     <ListItem
                       onClick={logout}
                       href="/"

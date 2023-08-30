@@ -252,16 +252,18 @@ const InvoiceSection = (props: Props) => {
       cell: ({ row }) => (
         <div
           className={`capitalize text-center border p-[1px] flex justify-center items-center  ${
-            row.getValue("status") == "Draft"
-              ? "bg-orange-500"
-              : row.getValue("status") == "Sent"
-              ? "bg-sky-500"
-              : row.getValue("status") == "Expired"
-              ? "bg-black text-white dark:bg-white dark:text-black"
-              : row.getValue("status") == "Declined"
+            row.getValue("status") == "Overdue"
               ? "bg-red-500"
-              : row.getValue("status") == "Accepted"
+              : row.getValue("status") == "Paid"
               ? "bg-green-500"
+              : row.getValue("status") == "Partially Paid"
+              ? "bg-yellow-500"
+              : row.getValue("status") == "Unpaid"
+              ? "bg-red-500"
+              : row.getValue("status") == "Not Sent"
+              ? "dark:bg-white dark:text-black bg-black text-white "
+              : row.getValue("status") == "Draft"
+              ? "bg-gray-500"
               : null
           }`}
         >
@@ -292,11 +294,12 @@ const InvoiceSection = (props: Props) => {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
+                <SelectItem value="Paid">Paid</SelectItem>
+                <SelectItem value="Overdue">Overdue</SelectItem>
+                <SelectItem value="Partially Paid">Partially Paid</SelectItem>
+                <SelectItem value="Unpaid">Unpaid</SelectItem>
+                <SelectItem value="Not Sent">Not Sent</SelectItem>
                 <SelectItem value="Draft">Draft</SelectItem>
-                <SelectItem value="Sent">Sent</SelectItem>
-                <SelectItem value="Expired">Expired</SelectItem>
-                <SelectItem value="Declined">Declined</SelectItem>
-                <SelectItem value="Accepted">Accepted</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -363,51 +366,27 @@ const InvoiceSection = (props: Props) => {
           }
 
           setAssignedInvoices(res.data.assignedInvoices);
-          let Draft = 0,
-            Sent = 0,
-            Open = 0,
-            Expired = 0,
-            Declined = 0,
-            Accepted = 0;
+          let Paid = 0;
+          let Overdue = 0;
           res.data.Invoices.forEach((Invoice: any) => {
-            if (Invoice.status == "Draft") Draft++;
-            else if (Invoice.status == "Sent") Sent++;
-            else if (Invoice.status == "Open") Open++;
-            else if (Invoice.status == "Expired") Expired++;
-            else if (Invoice.status == "Declined") Declined++;
-            else if (Invoice.status == "Accepted") Accepted++;
+            if (Invoice.status == "Paid") Paid++;
+            else if (Invoice.status == "Overdue") Overdue++;
           });
           setMyInvoiceStats({
-            Draft,
-            Sent,
-            Open,
-            Expired,
-            Declined,
-            Accepted,
+            Paid,
+            Overdue,
           });
 
           // re calculating for assigned Invoices
-          (Draft = 0),
-            (Sent = 0),
-            (Open = 0),
-            (Expired = 0),
-            (Declined = 0),
-            (Accepted = 0);
+          Paid = 0;
+          Overdue = 0;
           res.data.assignedInvoices.forEach((Invoice: any) => {
-            if (Invoice.status == "Draft") Draft++;
-            else if (Invoice.status == "Sent") Sent++;
-            else if (Invoice.status == "Open") Open++;
-            else if (Invoice.status == "Expired") Expired++;
-            else if (Invoice.status == "Declined") Declined++;
-            else if (Invoice.status == "Accepted") Accepted++;
+            if (Invoice.status == "Paid") Paid++;
+            else if (Invoice.status == "Overdue") Overdue++;
           });
           setAssignedInvoiceStats({
-            Draft,
-            Sent,
-            Open,
-            Expired,
-            Declined,
-            Accepted,
+            Paid,
+            Overdue,
           });
         })
 
@@ -483,48 +462,22 @@ const InvoiceSection = (props: Props) => {
           <Separator className="my-4" />
           <div className="flex h-5 items-center space-x-4 text-sm ">
             <h3 className="tracking-widest text-green-500 font-bold text-xl">
-              Accepted
+              Paid
             </h3>
             <h4 className="font-[800] text-lg">
               {section === "myInvoice"
-                ? myInvoiceStats.Accepted
-                : assignedInvoiceStats.Accepted}
+                ? myInvoiceStats.Paid
+                : assignedInvoiceStats.Paid}
             </h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-black dark:text-white font-bold text-xl">
-              Expired
-            </h3>
-            <h4 className="font-[800] text-lg">
-              {section === "myInvoice"
-                ? myInvoiceStats.Expired
-                : assignedInvoiceStats.Expired}
-            </h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-sky-500 font-bold text-xl">
-              Sent
-            </h3>
-            <h4 className="font-[800] text-lg">
-              {section === "myInvoice"
-                ? myInvoiceStats.Sent
-                : assignedInvoiceStats.Sent}
-            </h4>
-            <Separator orientation="vertical" />
-            <h3 className="tracking-widest text-orange-500 font-bold text-xl">
-              Draft
-            </h3>
-            <h4 className="font-[800] text-lg">
-              {section === "myInvoice"
-                ? myInvoiceStats.Draft
-                : assignedInvoiceStats.Draft}
-            </h4>
+
             <Separator orientation="vertical" />
             <h3 className="tracking-widest text-red-500 font-bold text-xl">
-              Declined
+              Overdue
             </h3>
             <h4 className="font-[800] text-lg">
               {section === "myInvoice"
-                ? myInvoiceStats.Declined
-                : assignedInvoiceStats.Declined}
+                ? myInvoiceStats.Overdue
+                : assignedInvoiceStats.Overdue}
             </h4>
           </div>
         </div>

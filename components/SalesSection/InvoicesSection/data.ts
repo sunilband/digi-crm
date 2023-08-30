@@ -79,7 +79,7 @@ export interface Invoice {
   currency: "INR" | "USD";
   tags?: string[];
   discountType?: "None" | "Before Tax" | "After Tax";
-  status?: "Draft" | "Sent" | "Open" | "Expired" | "Accepted" | "Declined";
+  status?: "Paid" | "Overdue";
   saleAgent: {
     id: string;
     name: string;

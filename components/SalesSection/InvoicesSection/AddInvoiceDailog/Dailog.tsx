@@ -165,9 +165,6 @@ const DailogBox = ({ open, setOpen }: Props) => {
   const [refresh, setRefresh] = useState(false);
   const [subTotal, setSubTotal] = useState(0);
 
-  console.log(formik.values);
-  // console.log("selected items",selectedItems);
-
   // calculate subtotal
   useEffect(() => {
     const tempItems = selectedItems.map((item) => {
@@ -322,7 +319,6 @@ const DailogBox = ({ open, setOpen }: Props) => {
         items: selectedItems,
       }).then((res) => {
         if (res.success) {
-          console.log(res);
           // clear form values
           formik.resetForm();
           setOpen(false);
@@ -572,11 +568,14 @@ const DailogBox = ({ open, setOpen }: Props) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
+                    <SelectItem value="Paid">Paid</SelectItem>
+                    <SelectItem value="Overdue">Overdue</SelectItem>
                     <SelectItem value="Draft">Draft</SelectItem>
-                    <SelectItem value="Sent">Sent</SelectItem>
-                    <SelectItem value="Expired">Expired</SelectItem>
-                    <SelectItem value="Declined">Declined</SelectItem>
-                    <SelectItem value="Accepted">Accepted</SelectItem>
+                    <SelectItem value="Unpaid">Unpaid</SelectItem>
+                    <SelectItem value="Not Sent">Not Sent</SelectItem>
+                    <SelectItem value="Partially Paid">
+                      Partially Paid
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
